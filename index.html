@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امتحان المرايا المقعرة والمحدبة - Concave & Convex Mirrors</title>
+    <meta name="description" content="امتحان تفاعلي شامل عن المرايا المقعرة والمحدبة - فيزياء">
+    <meta name="author" content="Mr. Mohammed Hesham">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        body.en-mode { font-family: 'Inter', sans-serif; }
+        .correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+        .timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+        @media print { .no-print { display: none !important; } }
+        .success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+        .grade-excellent { background: #dcfce7; color: #166534; }
+        .grade-good { background: #fef3c7; color: #92400e; }
+        .grade-pass { background: #dbeafe; color: #1e40af; }
+        .grade-fail { background: #fee2e2; color: #991b1b; }
+        .lang-switch {
+            position: fixed; top: 16px; left: 16px; z-index: 100;
+            background: white; padding: 6px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+            border: 2px solid #4f46e5;
+        }
+        [dir="ltr"] .lang-switch { left: auto; right: 16px; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: all 0.3s; border: none; font-size: 0.875rem;
+            background: transparent; color: #6b7280;
+        }
+        .lang-btn.active { background: #4f46e5; color: white; box-shadow: 0 2px 6px rgba(79,70,229,0.4); }
+        .lang-btn:hover:not(.active) { background: #eef2ff; color: #4f46e5; }
+        .shuffle-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: bold; margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        .math-display {
+            display: inline-block; direction: ltr;
+            font-family: 'Times New Roman', 'Cambria Math', serif;
+            font-size: 1.15em; font-style: italic;
+            padding: 2px 8px; background: #eef2ff;
+            border-radius: 6px; margin: 2px;
+            color: #4338ca; font-weight: 600; letter-spacing: 0.5px;
+        }
+        .save-indicator {
+            position: fixed; bottom: 20px; left: 20px; z-index: 200;
+            background: #10b981; color: white; padding: 8px 16px;
+            border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+        }
+        .save-indicator.show { opacity: 1; }
+        .formula-box {
+            background: #eef2ff; border: 2px solid #6366f1;
+            border-radius: 8px; padding: 12px; margin: 10px 0;
+            font-family: 'Times New Roman', serif;
+            direction: ltr; text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 to-blue-50 text-gray-800 p-4 md:p-8 min-h-screen">
+
+    <div class="lang-switch no-print">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+
+    <div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+    <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
+        <div class="bg-white p-4 rounded-2xl shadow-md inline-block border-2 border-indigo-100">
+            <span class="text-gray-600 ml-2" data-ar="الوقت المتبقي:" data-en="Time Remaining:">⏰ الوقت المتبقي:</span>
+            <span id="timer" class="text-2xl font-bold text-indigo-600 font-mono">45:00</span>
+            <span class="shuffle-badge" data-ar="🎲 أسئلة عشوائية" data-en="🎲 Random Questions">🎲 أسئلة عشوائية</span>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+        <button onclick="toggleAnswers()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="👀 إظهار / إخفاء الإجابات" data-en="👀 Show / Hide Answers">👀 إظهار / إخفاء الإجابات</button>
+        <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة" data-en="🖨️ Print">🖨️ طباعة</button>
+        <button onclick="reshuffleExam()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🔄 أسئلة جديدة" data-en="🔄 New Questions">🔄 أسئلة جديدة</button>
+        <button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🗑️ مسح التقدم" data-en="🗑️ Clear Progress">🗑️ مسح التقدم</button>
+    </div>
+
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-8 border-4 border-indigo-400">
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="🪞 المرايا المقعرة والمحدبة" data-en="🪞 Concave & Convex Mirrors">🪞 المرايا المقعرة والمحدبة</h1>
+            <h2 class="text-lg text-indigo-600 font-semibold" data-ar="الفيزياء - البصريات الهندسية" data-en="Physics - Geometric Optics">الفيزياء - البصريات الهندسية</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="خصائص المرايا، الأشعة الرئيسية، تكوين الصور، والزيغ الكروي" data-en="Mirror properties, principal rays, image formation, and spherical aberration">خصائص المرايا، الأشعة الرئيسية، تكوين الصور، والزيغ الكروي</p>
+            <p class="text-xs text-green-600 mt-2 font-semibold" data-ar="💾 يتم حفظ تقدمك تلقائياً - 20 سؤالاً في 5 أقسام" data-en="💾 Your progress is saved automatically - 20 questions in 5 sections">💾 يتم حفظ تقدمك تلقائياً - 20 سؤالاً في 5 أقسام</p>
+        </div>
+        <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-indigo-300 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="😊 الاسم:" data-en="😊 Name:">😊 الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-indigo-300 bg-transparent w-32 text-center" placeholder="اكتب اسمك"></span>
+            <span><span data-ar="🏫 الشعبة:" data-en="🏫 Class:">🏫 الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-indigo-300 bg-transparent w-28 text-center" placeholder="الشعبة"></span>
+            <span><span data-ar="⏰ المدة: 45 دقيقة" data-en="⏰ Duration: 45 min">⏰ المدة: 45 دقيقة</span></span>
+            <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 pts">📊 المجموع: 100 درجة</span></span>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-md border-2 border-indigo-200 no-print">
+        <h3 class="font-bold text-lg mb-3 text-indigo-700 text-center" data-ar="📐 القوانين والمفاهيم الأساسية" data-en="📐 Key Laws & Concepts">📐 القوانين والمفاهيم الأساسية</h3>
+        <div class="grid md:grid-cols-2 gap-3 text-sm">
+            <div class="formula-box"><strong>Focal Length:</strong> f = r / 2</div>
+            <div class="formula-box"><strong>Ray 1:</strong> Parallel to axis → reflects through F</div>
+            <div class="formula-box"><strong>Ray 2:</strong> Through F → reflects parallel to axis</div>
+            <div class="formula-box"><strong>Ray 3:</strong> Through C → reflects back on itself</div>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto space-y-8" id="exam-content"></main>
+
+    <div class="text-center no-print pb-8 mt-8">
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-lg px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="🎯 صحح إجاباتي!" data-en="🎯 Grade My Answers!">🎯 صحح إجاباتي!</button>
+    </div>
+
+    <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-4 border-indigo-400 hidden no-print">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="🏆 نتيجتك يا بطل! 🏆" data-en="🏆 Your Results, Champion! 🏆">🏆 نتيجتك يا بطل! 🏆</h2>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-indigo-50 p-4 rounded-xl text-center"><p data-ar="😊 الاسم" data-en="😊 Name">😊 الاسم</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
+            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="📅 التاريخ" data-en="📅 Date">📅 التاريخ</p><p id="res-date" class="font-bold text-xl text-blue-700">-</p></div>
+            <div class="bg-indigo-50 p-4 rounded-xl text-center"><p data-ar="🌟 المجموع" data-en="🌟 Score">🌟 المجموع</p><p id="res-total" class="font-bold text-3xl text-indigo-600">0 / 100</p></div>
+        </div>
+        <div class="text-center mb-6">
+            <span id="success-badge" class="success-badge grade-excellent">-</span>
+            <p id="success-percent" class="text-4xl font-bold text-indigo-600 mt-2">0%</p>
+            <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📊 أدائك في كل قسم:" data-en="📊 Your Performance:">📊 أدائك في كل قسم:</h3>
+            <div class="space-y-3" id="sections-performance"></div>
+        </div>
+        <div class="text-center mb-6">
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 أرسل النتيجة للمعلم" data-en="📧 Send Results to Teacher">📧 أرسل النتيجة للمعلم</button>
+            <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+        </div>
+        <div class="flex gap-3 justify-center">
+            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold" data-ar="🖨️ طباعة النتيجة" data-en="🖨️ Print Results">🖨️ طباعة النتيجة</button>
+        </div>
+    </div>
+
+    <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+        © <span data-ar="المرايا المقعرة والمحدبة" data-en="Concave & Convex Mirrors">المرايا المقعرة والمحدبة</span> | Mr. Mohammed Hesham 🪞
+    </footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'concave_convex_mirrors_exam_v1';
+const TOTAL_TIME = 2700;
+const TOTAL_QUESTIONS = 20;
+const TOTAL_SECTIONS = 5;
+const QUESTIONS_PER_SECTION = 4;
+
+let currentSeed = null;
+let answersVisible = false;
+let saveIndicatorTimeout = null;
+
+function mulberry32(a) {
+    return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+let rng = null;
+
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator');
+    indicator.classList.add('show');
+    if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+    saveIndicatorTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+function saveState(showIndicator = true) {
+    try {
+        const state = {
+            seed: currentSeed, lang: currentLang,
+            studentName: document.getElementById('studentName').value,
+            studentClass: document.getElementById('studentClass').value,
+            examDate: document.getElementById('examDate').value,
+            answers: getSelectedAnswers(),
+            timeRemaining: timeRemaining,
+            answersVisible: answersVisible, savedAt: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (showIndicator) showSaveIndicator();
+    } catch (e) { console.error('خطأ في الحفظ:', e); }
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+    } catch (e) { console.error('خطأ في التحميل:', e); }
+    return null;
+}
+
+function getSelectedAnswers() {
+    const answers = {};
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected) answers[i] = selected.value;
+    }
+    return answers;
+}
+
+function restoreAnswers(answers) {
+    if (!answers) return;
+    for (const [idx, val] of Object.entries(answers)) {
+        const radio = document.querySelector(`input[name="q${idx}"][value="${val}"]`);
+        if (radio) radio.checked = true;
+    }
+}
+
+function clearProgress() {
+    const confirmMsg = currentLang === 'ar' ? '⚠️ هل أنت متأكد من مسح كل التقدم؟' : '⚠️ Are you sure you want to clear all progress?';
+    if (confirm(confirmMsg)) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+}
+
+function setupAnswerListeners() {
+    document.getElementById('exam-content').addEventListener('change', (e) => {
+        if (e.target.type === 'radio') saveState();
+    });
+}
+
+function setupInputListeners() {
+    ['studentName', 'studentClass', 'examDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => saveState(false));
+            el.addEventListener('blur', () => saveState());
+        }
+    });
+}
+
+const originalExamData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 الجزء 1: خصائص المرايا المقعرة والمحدبة', en: '🔹 Part 1: Properties of Concave & Convex Mirrors' },
+            questions: [
+                {
+                    q: { ar: 'ما هي المرآة المقعرة؟', en: 'What is a concave mirror?' },
+                    options: [
+                        { ar: 'مرآة ذات سطح عاكس منحني للداخل', en: 'A mirror with an inwardly curving reflective surface' },
+                        { ar: 'مرآة ذات سطح عاكس منحني للخارج', en: 'A mirror with an outwardly curving reflective surface' },
+                        { ar: 'مرآة مسطحة تماماً', en: 'A perfectly flat mirror' },
+                        { ar: 'مرآة شفافة تماماً', en: 'A perfectly transparent mirror' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المرآة المقعرة لها سطح عاكس منحني للداخل، وتنحني أطرافها نحو المراقب.', en: 'A concave mirror has an inwardly curving reflective surface, with edges curving toward the observer.' }
+                },
+                {
+                    q: { ar: 'ما العلاقة بين البعد البؤري (f) ونصف قطر التكور (r)؟', en: 'What is the relationship between focal length (f) and radius of curvature (r)?' },
+                    options: [
+                        { ar: '<span class="math-display">f = r / 2</span>', en: '<span class="math-display">f = r / 2</span>' },
+                        { ar: '<span class="math-display">f = 2r</span>', en: '<span class="math-display">f = 2r</span>' },
+                        { ar: '<span class="math-display">f = r</span>', en: '<span class="math-display">f = r</span>' },
+                        { ar: '<span class="math-display">f = r²</span>', en: '<span class="math-display">f = r²</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'البعد البؤري يساوي نصف نصف قطر التكور: f = r / 2', en: 'Focal length equals half the radius of curvature: f = r / 2' }
+                },
+                {
+                    q: { ar: 'نقطة البؤرة (F) في المرآة المقعرة تعتبر:', en: 'The focal point (F) in a concave mirror is considered:' },
+                    options: [
+                        { ar: 'حقيقية (موجبة)', en: 'Real (positive)' },
+                        { ar: 'وهمية (سالبة)', en: 'Virtual (negative)' },
+                        { ar: 'غير موجودة', en: 'Non-existent' },
+                        { ar: 'عند اللانهاية', en: 'At infinity' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'نقطة البؤرة في المرآة المقعرة حقيقية لأن الأشعة تتجمع فعلياً فيها.', en: 'The focal point in a concave mirror is real because light rays actually converge there.' }
+                },
+                {
+                    q: { ar: 'ما هو المحور الرئيسي (Principal Axis)؟', en: 'What is the principal axis?' },
+                    options: [
+                        { ar: 'الخط المستقيم الذي يمر بمركز التكور C ورأس المرآة V', en: 'The straight line passing through the center of curvature C and the vertex V' },
+                        { ar: 'الخط العمودي على سطح المرآة فقط', en: 'The line perpendicular to the mirror surface only' },
+                        { ar: 'المسافة بين الجسم والصورة', en: 'The distance between object and image' },
+                        { ar: 'خط يمر عبر البؤرة فقط', en: 'A line passing through the focal point only' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المحور الرئيسي هو الخط المستقيم الذي يشمل القطعة المستقيمة CM (من مركز التكور إلى رأس المرآة).', en: 'The principal axis is the straight line that includes the line segment from the center of curvature to the vertex.' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 الجزء 2: الأشعة الرئيسية وقوانين الانعكاس', en: '🔹 Part 2: Principal Rays & Reflection Laws' },
+            questions: [
+                {
+                    q: { ar: 'الشعاع الساقط موازٍ للمحور الرئيسي ينعكس ماراً بـ:', en: 'A ray incident parallel to the principal axis reflects passing through:' },
+                    options: [
+                        { ar: 'نقطة البؤرة (F)', en: 'The focal point (F)' },
+                        { ar: 'مركز التكور (C)', en: 'The center of curvature (C)' },
+                        { ar: 'رأس المرآة (V)', en: 'The vertex (V)' },
+                        { ar: 'خلف المرآة', en: 'Behind the mirror' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الشعاع الموازي للمحور الرئيسي ينعكس ماراً بالبؤرة F.', en: 'A ray parallel to the principal axis reflects through the focal point F.' }
+                },
+                {
+                    q: { ar: 'الشعاع المار بنقطة البؤرة (F) ينعكس:', en: 'A ray passing through the focal point (F) reflects:' },
+                    options: [
+                        { ar: 'موازياً للمحور الرئيسي', en: 'Parallel to the principal axis' },
+                        { ar: 'ماراً بمركز التكور', en: 'Through the center of curvature' },
+                        { ar: 'عمودياً على السطح', en: 'Perpendicular to the surface' },
+                        { ar: 'في نفس مساره', en: 'Back on itself' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الشعاع المار بالبؤرة ينعكس موازياً للمحور الرئيسي.', en: 'A ray passing through the focal point reflects parallel to the principal axis.' }
+                },
+                {
+                    q: { ar: 'الشعاع المار بمركز التكور (C) ينعكس:', en: 'A ray passing through the center of curvature (C) reflects:' },
+                    options: [
+                        { ar: 'على نفس مساره (يرتد على نفسه)', en: 'Back on itself' },
+                        { ar: 'موازياً للمحور الرئيسي', en: 'Parallel to the principal axis' },
+                        { ar: 'ماراً بالبؤرة', en: 'Through the focal point' },
+                        { ar: 'بزاوية 45 درجة', en: 'At a 45-degree angle' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الشعاع المار بمركز التكور يسقط عمودياً على السطح فينعكس على نفس مساره.', en: 'A ray passing through the center of curvature strikes the surface perpendicularly and reflects back on itself.' }
+                },
+                {
+                    q: { ar: 'ما هو الحد الأدنى من الأشعة الرئيسية اللازمة لتحديد موقع الصورة؟', en: 'What is the minimum number of principal rays needed to locate an image?' },
+                    options: [
+                        { ar: 'شعاعان', en: 'Two rays' },
+                        { ar: 'شعاع واحد', en: 'One ray' },
+                        { ar: 'ثلاثة أشعة', en: 'Three rays' },
+                        { ar: 'أربعة أشعة', en: 'Four rays' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'يكفي شعاعان رئيسيان لتحديد موقع الصورة، ويمكن استخدام الثالث والرابع للتحقق.', en: 'Two principal rays are sufficient to find the image; the third and fourth can be used to check.' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 الجزء 3: تكوين الصور في المرايا المقعرة', en: '🔹 Part 3: Image Formation in Concave Mirrors' },
+            questions: [
+                {
+                    q: { ar: 'عندما يكون الجسم خارج مركز التكور (<span class="math-display">d_o > 2f</span>)، تكون الصورة:', en: 'When the object is outside the center of curvature (<span class="math-display">d_o > 2f</span>), the image is:' },
+                    options: [
+                        { ar: 'مقلوبة، أصغر من الجسم، حقيقية', en: 'Inverted, smaller than object, real' },
+                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' },
+                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
+                        { ar: 'معتدلة، أصغر من الجسم، وهمية', en: 'Upright, smaller than object, virtual' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'عندما يكون الجسم خارج C، تكون الصورة مقلوبة، أصغر، وحقيقية (أمام المرآة).', en: 'When the object is outside C, the image is inverted, smaller, and real (in front of the mirror).' }
+                },
+                {
+                    q: { ar: 'عندما يكون الجسم بين البؤرة (F) ومركز التكور (C)، تكون الصورة:', en: 'When the object is between the focal point (F) and center of curvature (C), the image is:' },
+                    options: [
+                        { ar: 'مقلوبة، أكبر من الجسم، حقيقية', en: 'Inverted, larger than object, real' },
+                        { ar: 'معتدلة، أصغر من الجسم، وهمية', en: 'Upright, smaller than object, virtual' },
+                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
+                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'عندما يكون الجسم بين F و C، تكون الصورة مقلوبة، مكبرة، وحقيقية.', en: 'When the object is between F and C, the image is inverted, magnified, and real.' }
+                },
+                {
+                    q: { ar: 'عندما يكون الجسم عند مركز التكور (<span class="math-display">d_o = 2f</span>)، تكون الصورة:', en: 'When the object is at the center of curvature (<span class="math-display">d_o = 2f</span>), the image is:' },
+                    options: [
+                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
+                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' },
+                        { ar: 'مقلوبة، أصغر من الجسم، حقيقية', en: 'Inverted, smaller than object, real' },
+                        { ar: 'عند اللانهاية', en: 'At infinity' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'عندما يكون الجسم عند C، تتكون الصورة عند C أيضاً، فتكون مقلوبة وبنفس الحجم وحقيقية.', en: 'When the object is at C, the image forms at C, making it inverted, same size, and real.' }
+                },
+                {
+                    q: { ar: 'عندما يكون الجسم بين المرآة ونقطة البؤرة (<span class="math-display">d_o < f</span>)، تكون الصورة:', en: 'When the object is between the mirror and the focal point (<span class="math-display">d_o < f</span>), the image is:' },
+                    options: [
+                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' },
+                        { ar: 'مقلوبة، أصغر من الجسم، حقيقية', en: 'Inverted, smaller than object, real' },
+                        { ar: 'مقلوبة، أكبر من الجسم، حقيقية', en: 'Inverted, larger than object, real' },
+                        { ar: 'معتدلة، نفس حجم الجسم، وهمية', en: 'Upright, same size as object, virtual' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'عندما يكون الجسم داخل البؤرة، تعمل المرآة كمرآة تجميل: الصورة معتدلة، مكبرة، وهمية (خلف المرآة).', en: 'When the object is inside the focal point, the mirror acts as a makeup mirror: image is upright, magnified, and virtual.' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 الجزء 4: عيوب الصور والمرايا المحدبة', en: '🔹 Part 4: Image Defects & Convex Mirrors' },
+            questions: [
+                {
+                    q: { ar: 'ماذا يحدث للصورة عندما يكون الجسم عند نقطة البؤرة (<span class="math-display">d_o = f</span>)؟', en: 'What happens to the image when the object is at the focal point (<span class="math-display">d_o = f</span>)?' },
+                    options: [
+                        { ar: 'تتكون الصورة عند اللانهاية (لا يمكن رؤيتها)', en: 'The image is said to be at infinity (cannot be seen)' },
+                        { ar: 'تتكون صورة وهمية صغيرة', en: 'A small virtual image is formed' },
+                        { ar: 'تتكون صورة حقيقية مكبرة', en: 'A magnified real image is formed' },
+                        { ar: 'لا ينعكس أي ضوء', en: 'No light is reflected' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'عندما يكون الجسم عند F، تنعكس الأشعة متوازية ولا تتقاطع، لذا تكون الصورة عند اللانهاية.', en: 'When the object is at F, rays reflect parallel and do not intersect, so the image is at infinity.' }
+                },
+                {
+                    q: { ar: 'ما هو الزيغ الكروي (Spherical Aberration)؟', en: 'What is spherical aberration?' },
+                    options: [
+                        { ar: 'عدم تجمع الأشعة الضوئية في نقطة بؤرية واحدة، مما يجعل الصورة ضبابية', en: 'Light rays do not converge at a single focal point, making the image fuzzy' },
+                        { ar: 'انعكاس الضوء بزاوية خاطئة', en: 'Light reflecting at the wrong angle' },
+                        { ar: 'امتصاص المرآة للضوء بدلاً من عكسه', en: 'The mirror absorbing light instead of reflecting it' },
+                        { ar: 'انكسار الضوء داخل المرآة', en: 'Light refracting inside the mirror' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الزيغ الكروي يحدث لأن الأشعة القريبة من الحواف لا تتجمع في نفس نقطة البؤرة، مما يسبب ضبابية الصورة.', en: 'Spherical aberration occurs because rays near the edges do not converge at the same focal point, causing a fuzzy image.' }
+                },
+                {
+                    q: { ar: 'نقطة البؤرة في المرآة المحدبة تعتبر:', en: 'The focal point in a convex mirror is considered:' },
+                    options: [
+                        { ar: 'وهمية (سالبة)', en: 'Virtual (negative)' },
+                        { ar: 'حقيقية (موجبة)', en: 'Real (positive)' },
+                        { ar: 'موجودة على سطح المرآة', en: 'Located on the mirror surface' },
+                        { ar: 'غير موجودة', en: 'Non-existent' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'في المرآة المحدبة، تتباعد الأشعة المنعكسة، وتبدو وكأنها تأتي من نقطة خلف المرآة، لذا البؤرة وهمية (سالبة).', en: 'In a convex mirror, reflected rays diverge and appear to come from a point behind the mirror, so the focal point is virtual (negative).' }
+                },
+                {
+                    q: { ar: 'الصورة المتكونة دائماً في المرآة المحدبة تكون:', en: 'The image formed in a convex mirror is always:' },
+                    options: [
+                        { ar: 'معتدلة، أصغر من الجسم، وهمية', en: 'Upright, smaller than object, virtual' },
+                        { ar: 'مقلوبة، أكبر من الجسم، حقيقية', en: 'Inverted, larger than object, real' },
+                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
+                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المرآة المحدبة تعطي دائماً صورة معتدلة، مصغرة، وهمية (مثل مرايا الرؤية الخلفية في السيارات).', en: 'A convex mirror always produces an upright, diminished, and virtual image (like car side-view mirrors).' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 الجزء 5: مسائل تطبيقية وحسابية', en: '🔹 Part 5: Applied & Calculation Problems' },
+            questions: [
+                {
+                    q: { ar: 'إذا كان نصف قطر تكور مرآة مقعرة يساوي <span class="math-display">20 cm</span>، فما هو البعد البؤري؟', en: 'If the radius of curvature of a concave mirror is <span class="math-display">20 cm</span>, what is the focal length?' },
+                    options: [
+                        { ar: '<span class="math-display">10 cm</span>', en: '<span class="math-display">10 cm</span>' },
+                        { ar: '<span class="math-display">20 cm</span>', en: '<span class="math-display">20 cm</span>' },
+                        { ar: '<span class="math-display">40 cm</span>', en: '<span class="math-display">40 cm</span>' },
+                        { ar: '<span class="math-display">5 cm</span>', en: '<span class="math-display">5 cm</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'f = r / 2 = 20 / 2 = 10 cm', en: 'f = r / 2 = 20 / 2 = 10 cm' }
+                },
+                {
+                    q: { ar: 'أي نوع من المرايا يُستخدم عادةً كمرايا رؤية خلفية في السيارات لتوسيع مجال الرؤية؟', en: 'Which type of mirror is typically used as a rear-view mirror in cars to widen the field of view?' },
+                    options: [
+                        { ar: 'مرآة محدبة', en: 'Convex mirror' },
+                        { ar: 'مرآة مقعرة', en: 'Concave mirror' },
+                        { ar: 'مرآة مستوية', en: 'Plane mirror' },
+                        { ar: 'مرآة أسطوانية', en: 'Cylindrical mirror' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'تُستخدم المرايا المحدبة لأنها تعطي صورة مصغرة، مما يسمح برؤية مساحة أوسع من الطريق.', en: 'Convex mirrors are used because they produce a diminished image, allowing a wider field of view of the road.' }
+                },
+                {
+                    q: { ar: 'إذا وُضع جسم على بعد <span class="math-display">2f</span> من مرآة مقعرة، فأين تتكون الصورة؟', en: 'If an object is placed at a distance of <span class="math-display">2f</span> from a concave mirror, where does the image form?' },
+                    options: [
+                        { ar: 'على بعد <span class="math-display">2f</span> (عند مركز التكور)', en: 'At a distance of <span class="math-display">2f</span> (at the center of curvature)' },
+                        { ar: 'على بعد <span class="math-display">f</span> (عند البؤرة)', en: 'At a distance of <span class="math-display">f</span> (at the focal point)' },
+                        { ar: 'خلف المرآة', en: 'Behind the mirror' },
+                        { ar: 'عند اللانهاية', en: 'At infinity' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'عندما يكون الجسم عند 2f (مركز التكور)، تتكون الصورة أيضاً عند 2f، وتكون حقيقية ومقلوبة وبنفس الحجم.', en: 'When the object is at 2f (center of curvature), the image also forms at 2f, and is real, inverted, and same size.' }
+                },
+                {
+                    q: { ar: 'لماذا تبدو الصور أحياناً ضبابية عند حواف المرآة الكروية؟', en: 'Why do images sometimes look blurry at the edges of a spherical mirror?' },
+                    options: [
+                        { ar: 'بسبب الزيغ الكروي (Spherical Aberration)', en: 'Due to spherical aberration' },
+                        { ar: 'بسبب انخفاض شدة الإضاءة', en: 'Due to low light intensity' },
+                        { ar: 'بسبب انكسار الضوء في الهواء', en: 'Due to light refraction in air' },
+                        { ar: 'بسبب صغر حجم المرآة', en: 'Due to the small size of the mirror' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الزيغ الكروي يحدث لأن الأشعة الساقطة على أطراف المرآة لا تتجمع في نفس النقطة البؤرية للأشعة المركزية.', en: 'Spherical aberration occurs because rays hitting the edges of the mirror do not converge at the same focal point as central rays.' }
+                }
+            ]
+        }
+    ]
+};
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+let examData;
+let correctAnswersMap = {};
+let currentLang = 'ar';
+let timeRemaining = TOTAL_TIME;
+let timerInterval;
+
+function prepareShuffledExam() {
+    rng = mulberry32(currentSeed);
+    examData = JSON.parse(JSON.stringify(originalExamData));
+    correctAnswersMap = {};
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        section.questions = shuffleArray(section.questions);
+        section.questions.forEach((q) => {
+            const optionsWithCorrect = q.options.map((opt, idx) => ({ option: opt, isCorrect: idx === q.correct }));
+            const shuffledOptions = shuffleArray(optionsWithCorrect);
+            q.options = shuffledOptions.map(o => o.option);
+            q.correct = shuffledOptions.findIndex(o => o.isCorrect);
+            correctAnswersMap[globalIdx] = String.fromCharCode(97 + q.correct);
+            globalIdx++;
+        });
+    });
+}
+
+function reshuffleExam() {
+    const msg = currentLang === 'ar' ? '🔄 سيتم إنشاء أسئلة جديدة ومسح إجاباتك الحالية. هل أنت متأكد؟' : '🔄 New questions will be generated and current answers cleared. Are you sure?';
+    if (confirm(msg)) {
+        currentSeed = Date.now(); timeRemaining = TOTAL_TIME; answersVisible = false;
+        prepareShuffledExam(); renderExam(); saveState();
+        alert(currentLang === 'ar' ? '🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀' : '🎲 Questions changed! Good luck! 🍀');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.innerHTML = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+    });
+    renderExam(); saveState(false);
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = { ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' }, en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' } };
+    const lbl = labels[currentLang]; const isRTL = currentLang === 'ar';
+    let html = ''; let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        html += `<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-indigo-100">
+            <h2 class="text-xl font-bold mb-4 text-indigo-700">${section.title[currentLang]}</h2>
+            <ol class="space-y-4 text-sm">`;
+        section.questions.forEach((q) => {
+            const bs = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `<li class="${bs} border-indigo-400 py-2" id="q-${globalIdx}">
+                <strong>${globalIdx + 1}.</strong> ${q.q[currentLang]}<br>`;
+            q.options.forEach((opt, oIdx) => {
+                const rs = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                html += `<label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'} hover:bg-indigo-50 rounded-lg p-1 transition">
+                    <input type="radio" name="q${globalIdx}" value="${String.fromCharCode(97 + oIdx)}" class="${rs}">
+                    ${lbl.option[oIdx]}) ${opt[currentLang]}</label>`;
+            });
+            html += `<div class="answer-box text-green-700 mt-2 font-medium ${answersVisible ? '' : 'hidden'} bg-green-50 rounded-lg p-2">
+                ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}</div></li>`;
+            globalIdx++;
+        });
+        html += `</ol></section>`;
+    });
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeRemaining--; updateTimerDisplay();
+        if (timeRemaining % 60 === 0) saveState(false);
+        if (timeRemaining <= 300) document.getElementById('timer').classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "⏰ انتهى الوقت!" : "⏰ Time's up!");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timeRemaining / 60); const s = timeRemaining % 60;
+    document.getElementById('timer').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function toggleAnswers() {
+    answersVisible = !answersVisible;
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden', !answersVisible));
+    saveState(false);
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const sectionScores = new Array(TOTAL_SECTIONS).fill(0);
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        const li = document.getElementById(`q-${i}`);
+        if (li) {
+            const isCorrect = sel && sel.value === correctAnswersMap[i];
+            if (isCorrect) { correctCount++; li.classList.add('correct'); li.classList.remove('incorrect'); sectionScores[Math.floor(i / QUESTIONS_PER_SECTION)]++; }
+            else { li.classList.add('incorrect'); li.classList.remove('correct'); }
+        }
+    }
+    const score = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+    document.getElementById('res-total').textContent = `${score} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'بطل' : 'Champion');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    const pc = document.getElementById('sections-performance'); pc.innerHTML = '';
+    examData.sections.forEach((s, idx) => {
+        pc.innerHTML += `<div class="flex justify-between items-center"><span class="text-gray-700">${s.title[currentLang]}</span><span class="font-bold text-indigo-700">${sectionScores[idx]}/${QUESTIONS_PER_SECTION}</span></div>`;
+    });
+    const badge = document.getElementById('success-badge');
+    document.getElementById('success-percent').textContent = `${score}%`;
+    if (currentLang === 'ar') {
+        if (score >= 90) { badge.textContent = '🌟 ممتاز جداً!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 ممتاز!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (score >= 90) { badge.textContent = '🌟 Outstanding!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 Excellent!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+    }
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+    const name = document.getElementById('studentName').value || 'N/A';
+    const studentClass = document.getElementById('studentClass').value || 'N/A';
+    const date = document.getElementById('examDate').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const badge = document.getElementById('success-badge').textContent;
+    let questionsHTML = ''; let globalIdx = 0;
+    examData.sections.forEach((section, sectionIdx) => {
+        questionsHTML += `<tr style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;"><td colspan="5" style="padding:12px;font-weight:bold;">📌 ${currentLang==='ar'?'القسم':'Section'} ${sectionIdx+1}: ${section.title[currentLang]}</td></tr>`;
+        section.questions.forEach((q) => {
+            const sel = document.querySelector(`input[name="q${globalIdx}"]:checked`);
+            const sv = sel ? sel.value : null; const cv = correctAnswersMap[globalIdx]; const ic = sv === cv;
+            let sat = currentLang==='ar'?'❌ لم يجب':'❌ No answer'; let sac = '#dc2626';
+            if (sv) { const si = sv.charCodeAt(0)-97; sat = q.options[si][currentLang]; sac = ic?'#059669':'#dc2626'; }
+            const cat = q.options[q.correct][currentLang];
+            const rb = ic?'#f0fdf4':'#fef2f2'; const bl = ic?'4px solid #10b981':'4px solid #ef4444';
+            questionsHTML += `<tr style="background:${rb};border-right:${bl};"><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;font-weight:bold;">${globalIdx+1}</td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#4338ca;">${currentLang==='ar'?'❓ السؤال:':'❓ Question:'}</strong><br><span style="font-size:13px;">${q.q[currentLang]}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:${sac};">${currentLang==='ar'?'✍️ إجابة الطالب:':'✍️ Student:'}</strong><br><span style="color:${sac};font-size:13px;">${sat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#059669;">${currentLang==='ar'?'✅ الصحيحة:':'✅ Correct:'}</strong><br><span style="color:#059669;font-size:13px;">${cat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;">${ic?'<span style="font-size:24px;">✅</span>':'<span style="font-size:24px;">❌</span>'}</td></tr>`;
+            globalIdx++;
+        });
+    });
+    const answersHTML = `<div style="font-family:'Segoe UI',Tahoma,Arial;direction:${currentLang==='ar'?'rtl':'ltr'};"><div style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;padding:20px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="margin:0;">${currentLang==='ar'?'نتيجة امتحان المرايا المقعرة والمحدبة':'Concave & Convex Mirrors Exam Result'}</h2><p style="margin:5px 0 0;opacity:0.9;">Physics - Geometric Optics</p></div><div style="background:#eef2ff;padding:15px;"><table style="width:100%;border-collapse:collapse;"><tr><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'😊 الاسم:':'😊 Name:'}</td><td style="padding:8px;">${name}</td><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'🏫 الشعبة:':'🏫 Class:'}</td><td style="padding:8px;">${studentClass}</td></tr><tr><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'📅 التاريخ:':'📅 Date:'}</td><td style="padding:8px;">${date}</td><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'🏆 التقدير:':'🏆 Grade:'}</td><td style="padding:8px;">${badge}</td></tr></table></div><div style="background:white;padding:20px;text-align:center;"><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#4f46e5;">${score}</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'الدرجة':'Score'}</div></div><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#059669;">${successRate}%</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'النسبة':'Rate'}</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#4f46e5;color:white;"><th style="padding:10px;border:1px solid #6366f1;">#</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'السؤال':'Question'}</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'إجابة الطالب':'Student'}</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'الصحيحة':'Correct'}</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'النتيجة':'Result'}</th></tr></thead><tbody>${questionsHTML}</tbody></table><div style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);padding:15px;border-radius:0 0 10px 10px;"><p style="margin:0;color:#4338ca;text-align:center;">🪞 <strong>${currentLang==='ar'?'أحسنت يا بطل! استمر في إتقان الفيزياء!':'Great job! Keep mastering Physics!'}</strong> 🪞</p><p style="margin:5px 0 0;color:#4338ca;text-align:center;font-size:12px;">${currentLang==='ar'?'تم الإرسال تلقائياً | Mr. Mohammed Hesham':'Auto-sent | Mr. Mohammed Hesham'}</p></div></div>`;
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, { to_email: TARGET_EMAIL, student_name: name, student_class: studentClass, exam_date: date, total_score: score, success_rate: successRate, grade: badge, answers_table: answersHTML }).then(() => {
+        status.textContent = currentLang==='ar'?'✅ تم الإرسال بنجاح!':'✅ Sent successfully!'; status.style.color = '#059669'; btn.textContent = currentLang==='ar'?'✓ تم':'✓ Sent';
+    }).catch(err => {
+        status.textContent = currentLang==='ar'?'❌ حدث خطأ':'❌ Error'; status.style.color = '#dc2626'; btn.disabled = false; btn.textContent = currentLang==='ar'?'📧 حاول مرة أخرى':'📧 Try Again'; console.error(err);
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = loadState();
+    if (saved && saved.seed) {
+        currentSeed = saved.seed; currentLang = saved.lang || 'ar';
+        timeRemaining = saved.timeRemaining !== undefined ? saved.timeRemaining : TOTAL_TIME;
+        answersVisible = saved.answersVisible || false;
+        document.documentElement.lang = currentLang;
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.getElementById('btn-ar').classList.toggle('active', currentLang === 'ar');
+        document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+        document.body.classList.toggle('en-mode', currentLang === 'en');
+        document.querySelectorAll('[data-ar][data-en]').forEach(el => { el.innerHTML = currentLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en'); });
+    } else { currentSeed = Date.now(); }
+    prepareShuffledExam(); renderExam();
+    if (saved) {
+        if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
+        if (saved.studentClass) document.getElementById('studentClass').value = saved.studentClass;
+        if (saved.examDate) document.getElementById('examDate').value = saved.examDate;
+        if (saved.answers) restoreAnswers(saved.answers);
+    }
+    setupAnswerListeners(); setupInputListeners(); startTimer();
+});
+window.addEventListener('beforeunload', () => saveState(false));
+</script>
+</body>
+</html>
