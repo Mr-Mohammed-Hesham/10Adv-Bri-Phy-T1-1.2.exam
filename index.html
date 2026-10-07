@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>امتحان المرايا المقعرة والمحدبة - Concave & Convex Mirrors</title>
-    <meta name="description" content="امتحان تفاعلي شامل عن المرايا المقعرة والمحدبة - فيزياء">
+    <!-- 📝 غيّر عنوان الامتحان والوصف هنا -->
+    <title>الصف العاشر المتقدم - الصف العاشر المتقدم المرايا ال | Mr. Mohammed Hesham</title>
+    <meta name="description" content="امتحان تفاعلي شامل - منصة مستر محمد هشام">
     <meta name="author" content="Mr. Mohammed Hesham">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; }
@@ -27,7 +31,7 @@
             position: fixed; top: 16px; left: 16px; z-index: 100;
             background: white; padding: 6px; border-radius: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
-            border: 2px solid #4f46e5;
+            border: 2px solid #0d9488;
         }
         [dir="ltr"] .lang-switch { left: auto; right: 16px; }
         .lang-btn {
@@ -35,11 +39,11 @@
             transition: all 0.3s; border: none; font-size: 0.875rem;
             background: transparent; color: #6b7280;
         }
-        .lang-btn.active { background: #4f46e5; color: white; box-shadow: 0 2px 6px rgba(79,70,229,0.4); }
-        .lang-btn:hover:not(.active) { background: #eef2ff; color: #4f46e5; }
+        .lang-btn.active { background: #0d9488; color: white; box-shadow: 0 2px 6px rgba(13,148,136,0.4); }
+        .lang-btn:hover:not(.active) { background: #f0fdfa; color: #0d9488; }
         .shuffle-badge {
             display: inline-block;
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            background: linear-gradient(135deg, #0d9488, #0f766e);
             color: white; padding: 4px 12px; border-radius: 20px;
             font-size: 0.75rem; font-weight: bold; margin-right: 8px;
             animation: pulse 2s infinite;
@@ -47,10 +51,10 @@
         .math-display {
             display: inline-block; direction: ltr;
             font-family: 'Times New Roman', 'Cambria Math', serif;
-            font-size: 1.15em; font-style: italic;
-            padding: 2px 8px; background: #eef2ff;
+            font-size: 1.2em; font-style: italic;
+            padding: 2px 8px; background: #f0fdfa;
             border-radius: 6px; margin: 2px;
-            color: #4338ca; font-weight: 600; letter-spacing: 0.5px;
+            color: #0f766e; font-weight: 600; letter-spacing: 0.5px;
         }
         .save-indicator {
             position: fixed; bottom: 20px; left: 20px; z-index: 200;
@@ -61,79 +65,146 @@
         }
         .save-indicator.show { opacity: 1; }
         .formula-box {
-            background: #eef2ff; border: 2px solid #6366f1;
-            border-radius: 8px; padding: 12px; margin: 10px 0;
+            background: #f8fafc; border: 1.5px solid #0d9488;
+            border-radius: 12px; padding: 12px 16px; margin: 4px 0;
+            box-shadow: 0 2px 6px rgba(13,148,136,0.06);
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .formula-box .formula-title {
+            font-size: 0.9rem; font-weight: 700; color: #0f766e;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .formula-box .formula-math {
+            font-family: 'Cambria Math', 'KaTeX_Math', 'Times New Roman', serif;
+            font-size: 1.15rem; direction: ltr; text-align: center;
+            color: #0f172a; padding: 6px 12px; background: #ffffff;
+            border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;
+        }
+        .exam-diagram-container {
+            display: flex; justify-content: center; align-items: center;
+            margin: 14px 0; width: 100%; overflow-x: auto;
+        }
+        .exam-diagram {
+            max-width: 100%; height: auto; margin: 8px auto; display: block;
+            background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px;
+            padding: 10px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .exam-table-container {
+            width: 100%; overflow-x: auto; margin: 12px 0;
+        }
+        .exam-table {
+            width: 100%; max-width: 520px; margin: 0 auto;
+            border-collapse: collapse; font-size: 0.88rem; text-align: center;
+            background-color: #ffffff; border-radius: 8px; overflow: hidden;
+            border: 1.5px solid #cbd5e1;
+        }
+        .exam-table th {
+            background-color: #f0fdfa; color: #0f766e; font-weight: bold;
+            padding: 8px 12px; border: 1px solid #ccfbf1;
+        }
+        .exam-table td {
+            padding: 6px 12px; border: 1px solid #e2e8f0; color: #1e293b;
             font-family: 'Times New Roman', serif;
-            direction: ltr; text-align: center;
+        }
+        .exam-table tr:nth-child(even) { background-color: #f8fafc; }
+        .q-meta-badges {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center;
+        }
+        .q-category-pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;
+            font-size: 0.75rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px;
+        }
+        .q-law-pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: #fef3c7; color: #b45309; border: 1px solid #fde68a;
+            font-size: 0.75rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px;
+            font-family: 'Times New Roman', 'Cambria Math', serif; direction: ltr;
+        }
+        .q-type-interactive {
+            background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;
+        }
+        .q-type-graph {
+            background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-50 to-blue-50 text-gray-800 p-4 md:p-8 min-h-screen">
+<body class="bg-gradient-to-br from-teal-50 to-emerald-50 text-gray-800 p-4 md:p-8 min-h-screen">
 
     <div class="lang-switch no-print">
         <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
         <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
     </div>
 
-    <div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+    <div id="saveIndicator" class="save-indicator"> <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
 
     <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
-        <div class="bg-white p-4 rounded-2xl shadow-md inline-block border-2 border-indigo-100">
+        <div class="bg-white p-4 rounded-2xl shadow-md inline-block border-2 border-teal-100">
             <span class="text-gray-600 ml-2" data-ar="الوقت المتبقي:" data-en="Time Remaining:">⏰ الوقت المتبقي:</span>
-            <span id="timer" class="text-2xl font-bold text-indigo-600 font-mono">45:00</span>
+            <span id="timer" class="text-2xl font-bold text-teal-600 font-mono">45:00</span>
             <span class="shuffle-badge" data-ar="🎲 أسئلة عشوائية" data-en="🎲 Random Questions">🎲 أسئلة عشوائية</span>
         </div>
     </div>
 
     <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
-        <button onclick="toggleAnswers()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="👀 إظهار / إخفاء الإجابات" data-en="👀 Show / Hide Answers">👀 إظهار / إخفاء الإجابات</button>
+        <button onclick="toggleAnswers()" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="👀 إظهار / إخفاء الإجابات" data-en="👀 Show / Hide Answers">👀 إظهار / إخفاء الإجابات</button>
         <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة" data-en="🖨️ Print">🖨️ طباعة</button>
-        <button onclick="reshuffleExam()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🔄 أسئلة جديدة" data-en="🔄 New Questions">🔄 أسئلة جديدة</button>
+        <button onclick="reshuffleExam()" class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🔄 أسئلة جديدة" data-en="🔄 New Questions">🔄 أسئلة جديدة</button>
         <button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow cursor-pointer" data-ar="🗑️ مسح التقدم" data-en="🗑️ Clear Progress">🗑️ مسح التقدم</button>
     </div>
 
-    <header class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-8 border-4 border-indigo-400">
+    <!-- 📝 عناوين الامتحان والوصف المعتمد لمادتي الفيزياء والرياضيات -->
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-8 border-4 border-teal-400">
         <div class="text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="🪞 المرايا المقعرة والمحدبة" data-en="🪞 Concave & Convex Mirrors">🪞 المرايا المقعرة والمحدبة</h1>
-            <h2 class="text-lg text-indigo-600 font-semibold" data-ar="الفيزياء - البصريات الهندسية" data-en="Physics - Geometric Optics">الفيزياء - البصريات الهندسية</h2>
-            <p class="text-sm text-gray-600 mt-2" data-ar="خصائص المرايا، الأشعة الرئيسية، تكوين الصور، والزيغ الكروي" data-en="Mirror properties, principal rays, image formation, and spherical aberration">خصائص المرايا، الأشعة الرئيسية، تكوين الصور، والزيغ الكروي</p>
-            <p class="text-xs text-green-600 mt-2 font-semibold" data-ar="💾 يتم حفظ تقدمك تلقائياً - 20 سؤالاً في 5 أقسام" data-en="💾 Your progress is saved automatically - 20 questions in 5 sections">💾 يتم حفظ تقدمك تلقائياً - 20 سؤالاً في 5 أقسام</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="📐 الصف العاشر المتقدم - الصف العاشر المتقدم المرايا ال" data-en="📐 Interactive Exam: -">📐 الصف العاشر المتقدم - الصف العاشر المتقدم المرايا ال</h1>
+            <h2 class="text-lg text-teal-600 font-semibold" data-ar="الصف العاشر المتقدم • مادة العلوم والتطبيقات" data-en="Grade &amp; Subject: الصف العاشر المتقدم">الصف العاشر المتقدم • مادة العلوم والتطبيقات</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="امتحان تفاعلي تطبيقي: مسائل حسابية دقيقة، معادلات وقوانين، رسوم بيانية SVG، ودوائر كهربية مع تصحيح فوري" data-en="Interactive STEM exam: Quantitative problems, formulas, SVG diagrams, circuits, and instant grading">امتحان تفاعلي تطبيقي: مسائل حسابية دقيقة، معادلات وقوانين، رسوم بيانية SVG، ودوائر كهربية مع تصحيح فوري</p>
+            <p class="text-xs text-green-600 mt-2 font-semibold" data-ar="💾 يتم حفظ تقدمك تلقائياً" data-en="💾 Your progress is saved automatically">💾 يتم حفظ تقدمك تلقائياً</p>
         </div>
         <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-indigo-300 bg-transparent w-28 text-center"></span>
-            <span><span data-ar="😊 الاسم:" data-en="😊 Name:">😊 الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-indigo-300 bg-transparent w-32 text-center" placeholder="اكتب اسمك"></span>
-            <span><span data-ar="🏫 الشعبة:" data-en="🏫 Class:">🏫 الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-indigo-300 bg-transparent w-28 text-center" placeholder="الشعبة"></span>
-            <span><span data-ar="⏰ المدة: 45 دقيقة" data-en="⏰ Duration: 45 min">⏰ المدة: 45 دقيقة</span></span>
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-teal-300 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="😊 الاسم:" data-en="😊 Name:">😊 الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-teal-300 bg-transparent w-32 text-center" placeholder="اكتب اسمك"></span>
+            <span><span data-ar="🏫 الشعبة:" data-en="🏫 Class:">🏫 الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-teal-300 bg-transparent w-28 text-center" placeholder="الشعبة"></span>
+            <span><span data-ar="⏰ المدة: 45 دقيقة" data-en="⏰ Duration: 45 min">⏰ المدة: 60 دقيقة</span></span>
             <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 pts">📊 المجموع: 100 درجة</span></span>
         </div>
     </header>
 
-    <div class="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-md border-2 border-indigo-200 no-print">
-        <h3 class="font-bold text-lg mb-3 text-indigo-700 text-center" data-ar="📐 القوانين والمفاهيم الأساسية" data-en="📐 Key Laws & Concepts">📐 القوانين والمفاهيم الأساسية</h3>
-        <div class="grid md:grid-cols-2 gap-3 text-sm">
-            <div class="formula-box"><strong>Focal Length:</strong> f = r / 2</div>
-            <div class="formula-box"><strong>Ray 1:</strong> Parallel to axis → reflects through F</div>
-            <div class="formula-box"><strong>Ray 2:</strong> Through F → reflects parallel to axis</div>
-            <div class="formula-box"><strong>Ray 3:</strong> Through C → reflects back on itself</div>
+    <!-- 📝 صيغ وقوانين أساسية للامتحان -->
+    <div class="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-md border-2 border-teal-200 no-print" id="notes-formula-box">
+        <h3 class="font-bold text-lg mb-3 text-teal-700 text-center" data-ar="📐 القوانين والصيغ الرياضية والعلمية الهامة" data-en="📐 Key Mathematical & Scientific Formulas">📐 القوانين والصيغ الرياضية والعلمية الهامة</h3>
+        <div class="grid md:grid-cols-2 gap-3 text-sm" id="notes-content">
+            <div class="formula-box">
+                <span class="formula-title">📐 معادلة المرايا</span>
+                <span class="formula-math">1/f = 1/do + 1/di</span>
+            </div>
+            <div class="formula-box">
+                <span class="formula-title">📐 قانون التكبير</span>
+                <span class="formula-math">m = -di / do = hi / ho</span>
+            </div>
+            <div class="formula-box">
+                <span class="formula-title">📐 العلاقة بين البعد البؤري ونصف القطر</span>
+                <span class="formula-math">f = R / 2</span>
+            </div>
         </div>
     </div>
 
     <main class="max-w-4xl mx-auto space-y-8" id="exam-content"></main>
 
     <div class="text-center no-print pb-8 mt-8">
-        <button onclick="gradeExam()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-lg px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="🎯 صحح إجاباتي!" data-en="🎯 Grade My Answers!">🎯 صحح إجاباتي!</button>
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-lg px-10 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="🎯 صحح إجاباتي!" data-en="🎯 Grade My Answers!">🎯 صحح إجاباتي!</button>
     </div>
 
-    <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-4 border-indigo-400 hidden no-print">
+    <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-4 border-teal-400 hidden no-print">
         <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="🏆 نتيجتك يا بطل! 🏆" data-en="🏆 Your Results, Champion! 🏆">🏆 نتيجتك يا بطل! 🏆</h2>
         <div class="grid md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-indigo-50 p-4 rounded-xl text-center"><p data-ar="😊 الاسم" data-en="😊 Name">😊 الاسم</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
-            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="📅 التاريخ" data-en="📅 Date">📅 التاريخ</p><p id="res-date" class="font-bold text-xl text-blue-700">-</p></div>
-            <div class="bg-indigo-50 p-4 rounded-xl text-center"><p data-ar="🌟 المجموع" data-en="🌟 Score">🌟 المجموع</p><p id="res-total" class="font-bold text-3xl text-indigo-600">0 / 100</p></div>
+            <div class="bg-teal-50 p-4 rounded-xl text-center"><p data-ar="😊 الاسم" data-en="😊 Name">😊 الاسم</p><p id="res-name" class="font-bold text-xl text-teal-700">-</p></div>
+            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p data-ar="📅 التاريخ" data-en="📅 Date">📅 التاريخ</p><p id="res-date" class="font-bold text-xl text-emerald-700">-</p></div>
+            <div class="bg-teal-50 p-4 rounded-xl text-center"><p data-ar="🌟 المجموع" data-en="🌟 Score">🌟 المجموع</p><p id="res-total" class="font-bold text-3xl text-teal-600">0 / 100</p></div>
         </div>
         <div class="text-center mb-6">
             <span id="success-badge" class="success-badge grade-excellent">-</span>
-            <p id="success-percent" class="text-4xl font-bold text-indigo-600 mt-2">0%</p>
+            <p id="success-percent" class="text-4xl font-bold text-teal-600 mt-2">0%</p>
             <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
         </div>
         <div class="bg-gray-50 p-6 rounded-xl mb-6">
@@ -141,7 +212,7 @@
             <div class="space-y-3" id="sections-performance"></div>
         </div>
         <div class="text-center mb-6">
-            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 أرسل النتيجة للمعلم" data-en="📧 Send Results to Teacher">📧 أرسل النتيجة للمعلم</button>
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 أرسل النتيجة للمعلم" data-en="📧 Send Results to Teacher">📧 أرسل النتيجة للمعلم</button>
             <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
         </div>
         <div class="flex gap-3 justify-center">
@@ -150,21 +221,26 @@
     </div>
 
     <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
-        © <span data-ar="المرايا المقعرة والمحدبة" data-en="Concave & Convex Mirrors">المرايا المقعرة والمحدبة</span> | Mr. Mohammed Hesham 🪞
+        © <span data-ar="الصف العاشر المتقدم - الصف العاشر المتقدم المرايا ال" data-en="Interactive Exam: -">الصف العاشر المتقدم - الصف العاشر المتقدم المرايا ال</span> | Mr. Mohammed Hesham 📐
     </footer>
 
 <script>
+// ==================== إعدادات EmailJS ====================
 const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
 const SERVICE_ID = "service_w15m64i";
 const TEMPLATE_ID = "template_5b0u2tq";
 const TARGET_EMAIL = "mohammedhesham872@gmail.com";
 emailjs.init(PUBLIC_KEY);
 
-const STORAGE_KEY = 'concave_convex_mirrors_exam_v1';
-const TOTAL_TIME = 2700;
-const TOTAL_QUESTIONS = 20;
-const TOTAL_SECTIONS = 5;
-const QUESTIONS_PER_SECTION = 4;
+// ==================== 💾 نظام حفظ التقدم ====================
+// 📝 غيّر اسم المفتاح ليكون فريداً لكل امتحان جديد
+const STORAGE_KEY = 'hesham_exam_muyccfuc'; 
+
+// ⚠️ هام: يجب أن تتطابق هذه الأرقام مع عدد الأسئلة والأقسام التي تضعها في originalExamData بالأسفل
+const TOTAL_TIME = 2700; // الوقت بالثواني (3600 = 60 دقيقة)
+const TOTAL_QUESTIONS = 20; // العدد الكلي للأسئلة
+const TOTAL_SECTIONS = 5; // العدد الكلي للأقسام
+const QUESTIONS_PER_SECTION = 4; // عدد الأسئلة في كل قسم (لحساب الدرجات)
 
 let currentSeed = null;
 let answersVisible = false;
@@ -182,32 +258,53 @@ let rng = null;
 
 function showSaveIndicator() {
     const indicator = document.getElementById('saveIndicator');
+    if (!indicator) return;
     indicator.classList.add('show');
     if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
     saveIndicatorTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+const _memoryStore = {};
+function safeStorageGet(k) {
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) return window.localStorage.getItem(k);
+    } catch(e) {}
+    return _memoryStore[k] || null;
+}
+function safeStorageSet(k, v) {
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) { window.localStorage.setItem(k, v); return; }
+    } catch(e) {}
+    _memoryStore[k] = String(v);
+}
+function safeStorageRemove(k) {
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) { window.localStorage.removeItem(k); return; }
+    } catch(e) {}
+    delete _memoryStore[k];
 }
 
 function saveState(showIndicator = true) {
     try {
         const state = {
             seed: currentSeed, lang: currentLang,
-            studentName: document.getElementById('studentName').value,
-            studentClass: document.getElementById('studentClass').value,
-            examDate: document.getElementById('examDate').value,
+            studentName: document.getElementById('studentName')?.value || '',
+            studentClass: document.getElementById('studentClass')?.value || '',
+            examDate: document.getElementById('examDate')?.value || '',
             answers: getSelectedAnswers(),
             timeRemaining: timeRemaining,
             answersVisible: answersVisible, savedAt: Date.now()
         };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        safeStorageSet(STORAGE_KEY, JSON.stringify(state));
         if (showIndicator) showSaveIndicator();
-    } catch (e) { console.error('خطأ في الحفظ:', e); }
+    } catch (e) {}
 }
 
 function loadState() {
     try {
-        const saved = localStorage.getItem(STORAGE_KEY);
+        const saved = safeStorageGet(STORAGE_KEY);
         if (saved) return JSON.parse(saved);
-    } catch (e) { console.error('خطأ في التحميل:', e); }
+    } catch (e) {}
     return null;
 }
 
@@ -230,13 +327,16 @@ function restoreAnswers(answers) {
 
 function clearProgress() {
     const confirmMsg = currentLang === 'ar' ? '⚠️ هل أنت متأكد من مسح كل التقدم؟' : '⚠️ Are you sure you want to clear all progress?';
-    if (confirm(confirmMsg)) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+    if (confirm(confirmMsg)) { safeStorageRemove(STORAGE_KEY); location.reload(); }
 }
 
 function setupAnswerListeners() {
-    document.getElementById('exam-content').addEventListener('change', (e) => {
-        if (e.target.type === 'radio') saveState();
-    });
+    const content = document.getElementById('exam-content');
+    if (content) {
+        content.addEventListener('change', (e) => {
+            if (e.target.type === 'radio') saveState();
+        });
+    }
 }
 
 function setupInputListeners() {
@@ -249,264 +349,643 @@ function setupInputListeners() {
     });
 }
 
+// =====================================================================
+// 📝 بنك الأسئلة التفاعلية لمادتي الفيزياء والرياضيات (20 مسألة عبر 5 أقسام)
+// =====================================================================
 const originalExamData = {
-    sections: [
+    "sections": [
         {
-            id: 'sec1',
-            title: { ar: '🔹 الجزء 1: خصائص المرايا المقعرة والمحدبة', en: '🔹 Part 1: Properties of Concave & Convex Mirrors' },
-            questions: [
+            "id": "sec1",
+            "title": {
+                "ar": "🔹 الجزء 1: المفاهيم والأساسيات",
+                "en": "🔹 Part 1: Core Concepts & Fundamentals"
+            },
+            "questions": [
                 {
-                    q: { ar: 'ما هي المرآة المقعرة؟', en: 'What is a concave mirror?' },
-                    options: [
-                        { ar: 'مرآة ذات سطح عاكس منحني للداخل', en: 'A mirror with an inwardly curving reflective surface' },
-                        { ar: 'مرآة ذات سطح عاكس منحني للخارج', en: 'A mirror with an outwardly curving reflective surface' },
-                        { ar: 'مرآة مسطحة تماماً', en: 'A perfectly flat mirror' },
-                        { ar: 'مرآة شفافة تماماً', en: 'A perfectly transparent mirror' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 f = R / 2</span></div>إذا كان نصف قطر تكور مرآة مقعرة يساوي 24.0 cm، فما هو بعدها البؤري؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 f = R / 2</span></div>If the radius of curvature of a concave mirror is 24.0 cm, what is its focal length?"
+                    },
+                    "options": [
+                        {
+                            "ar": "12.0 cm",
+                            "en": "12.0 cm"
+                        },
+                        {
+                            "ar": "24.0 cm",
+                            "en": "24.0 cm"
+                        },
+                        {
+                            "ar": "48.0 cm",
+                            "en": "48.0 cm"
+                        },
+                        {
+                            "ar": "6.0 cm",
+                            "en": "6.0 cm"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'المرآة المقعرة لها سطح عاكس منحني للداخل، وتنحني أطرافها نحو المراقب.', en: 'A concave mirror has an inwardly curving reflective surface, with edges curving toward the observer.' }
+                    "correct": 0,
+                    "answer": {
+                        "ar": "البعد البؤري يساوي نصف قطر التكور مقسوماً على 2. إذن: 24 / 2 = 12 cm.",
+                        "en": "The focal length is half the radius of curvature. Therefore: 24 / 2 = 12 cm."
+                    }
                 },
                 {
-                    q: { ar: 'ما العلاقة بين البعد البؤري (f) ونصف قطر التكور (r)؟', en: 'What is the relationship between focal length (f) and radius of curvature (r)?' },
-                    options: [
-                        { ar: '<span class="math-display">f = r / 2</span>', en: '<span class="math-display">f = r / 2</span>' },
-                        { ar: '<span class="math-display">f = 2r</span>', en: '<span class="math-display">f = 2r</span>' },
-                        { ar: '<span class="math-display">f = r</span>', en: '<span class="math-display">f = r</span>' },
-                        { ar: '<span class="math-display">f = r²</span>', en: '<span class="math-display">f = r²</span>' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 R = 2f</span></div>مرآة محدبة بعدها البؤري -6.0 cm. ما هو نصف قطر تكورها؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 R = 2f</span></div>A convex mirror has a focal length of -6.0 cm. What is its radius of curvature?"
+                    },
+                    "options": [
+                        {
+                            "ar": "3.0 cm",
+                            "en": "3.0 cm"
+                        },
+                        {
+                            "ar": "-3.0 cm",
+                            "en": "-3.0 cm"
+                        },
+                        {
+                            "ar": "12.0 cm",
+                            "en": "12.0 cm"
+                        },
+                        {
+                            "ar": "-12.0 cm",
+                            "en": "-12.0 cm"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'البعد البؤري يساوي نصف نصف قطر التكور: f = r / 2', en: 'Focal length equals half the radius of curvature: f = r / 2' }
+                    "correct": 3,
+                    "answer": {
+                        "ar": "نصف قطر التكور يساوي ضعف البعد البؤري. R = 2 * (-6) = -12 cm.",
+                        "en": "The radius of curvature is twice the focal length. R = 2 * (-6) = -12 cm."
+                    }
                 },
                 {
-                    q: { ar: 'نقطة البؤرة (F) في المرآة المقعرة تعتبر:', en: 'The focal point (F) in a concave mirror is considered:' },
-                    options: [
-                        { ar: 'حقيقية (موجبة)', en: 'Real (positive)' },
-                        { ar: 'وهمية (سالبة)', en: 'Virtual (negative)' },
-                        { ar: 'غير موجودة', en: 'Non-existent' },
-                        { ar: 'عند اللانهاية', en: 'At infinity' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>وضع جسم على بعد 20 cm أمام مرآة مقعرة بعدها البؤري 10 cm. أين تتكون الصورة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>An object is placed 20 cm in front of a concave mirror with a focal length of 10 cm. Where is the image formed?"
+                    },
+                    "options": [
+                        {
+                            "ar": "عند 20 cm",
+                            "en": "At 20 cm"
+                        },
+                        {
+                            "ar": "عند 10 cm",
+                            "en": "At 10 cm"
+                        },
+                        {
+                            "ar": "عند 30 cm",
+                            "en": "At 30 cm"
+                        },
+                        {
+                            "ar": "في اللانهاية",
+                            "en": "At infinity"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'نقطة البؤرة في المرآة المقعرة حقيقية لأن الأشعة تتجمع فعلياً فيها.', en: 'The focal point in a concave mirror is real because light rays actually converge there.' }
+                    "correct": 0,
+                    "answer": {
+                        "ar": "باستخدام معادلة المرايا: 1/10 = 1/20 + 1/di. إذن 1/di = 1/10 - 1/20 = 1/20. أي di = 20 cm.",
+                        "en": "Using the mirror equation: 1/10 = 1/20 + 1/di. Thus 1/di = 1/10 - 1/20 = 1/20. So di = 20 cm."
+                    }
                 },
                 {
-                    q: { ar: 'ما هو المحور الرئيسي (Principal Axis)؟', en: 'What is the principal axis?' },
-                    options: [
-                        { ar: 'الخط المستقيم الذي يمر بمركز التكور C ورأس المرآة V', en: 'The straight line passing through the center of curvature C and the vertex V' },
-                        { ar: 'الخط العمودي على سطح المرآة فقط', en: 'The line perpendicular to the mirror surface only' },
-                        { ar: 'المسافة بين الجسم والصورة', en: 'The distance between object and image' },
-                        { ar: 'خط يمر عبر البؤرة فقط', en: 'A line passing through the focal point only' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>أي مما يلي يصف الصورة المتكونة في المرآة المستوية؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>Which of the following describes the image formed by a plane mirror?"
+                    },
+                    "options": [
+                        {
+                            "ar": "حقيقية ومقلوبة",
+                            "en": "Real and inverted"
+                        },
+                        {
+                            "ar": "خيالية ومعتدلة",
+                            "en": "Virtual and upright"
+                        },
+                        {
+                            "ar": "حقيقية ومعتدلة",
+                            "en": "Real and upright"
+                        },
+                        {
+                            "ar": "خيالية ومقلوبة",
+                            "en": "Virtual and inverted"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'المحور الرئيسي هو الخط المستقيم الذي يشمل القطعة المستقيمة CM (من مركز التكور إلى رأس المرآة).', en: 'The principal axis is the straight line that includes the line segment from the center of curvature to the vertex.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "المرايا المستوية تكون دائماً صوراً خيالية ومعتدلة ومساوية للجسم في الحجم.",
+                        "en": "Plane mirrors always form virtual, upright images that are the same size as the object."
+                    }
                 }
             ]
         },
         {
-            id: 'sec2',
-            title: { ar: '🔹 الجزء 2: الأشعة الرئيسية وقوانين الانعكاس', en: '🔹 Part 2: Principal Rays & Reflection Laws' },
-            questions: [
+            "id": "sec2",
+            "title": {
+                "ar": "🔹 الجزء 2: التطبيقات والمعادلات",
+                "en": "🔹 Part 2: Formulas & Applied Problems"
+            },
+            "questions": [
                 {
-                    q: { ar: 'الشعاع الساقط موازٍ للمحور الرئيسي ينعكس ماراً بـ:', en: 'A ray incident parallel to the principal axis reflects passing through:' },
-                    options: [
-                        { ar: 'نقطة البؤرة (F)', en: 'The focal point (F)' },
-                        { ar: 'مركز التكور (C)', en: 'The center of curvature (C)' },
-                        { ar: 'رأس المرآة (V)', en: 'The vertex (V)' },
-                        { ar: 'خلف المرآة', en: 'Behind the mirror' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>إذا وضع جسم بين البؤرة ومرآة مقعرة، تكون الصورة:",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>If an object is placed between the focal point and a concave mirror, the image is:"
+                    },
+                    "options": [
+                        {
+                            "ar": "حقيقية ومكبرة",
+                            "en": "Real and enlarged"
+                        },
+                        {
+                            "ar": "خيالية ومكبرة",
+                            "en": "Virtual and enlarged"
+                        },
+                        {
+                            "ar": "حقيقية ومصغرة",
+                            "en": "Real and reduced"
+                        },
+                        {
+                            "ar": "خيالية ومصغرة",
+                            "en": "Virtual and reduced"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'الشعاع الموازي للمحور الرئيسي ينعكس ماراً بالبؤرة F.', en: 'A ray parallel to the principal axis reflects through the focal point F.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "عندما يكون الجسم داخل البعد البؤري للمرآة المقعرة، تتكون صورة خيالية ومعتدلة ومكبرة خلف المرآة.",
+                        "en": "When an object is inside the focal length of a concave mirror, a virtual, upright, and enlarged image is formed behind the mirror."
+                    }
                 },
                 {
-                    q: { ar: 'الشعاع المار بنقطة البؤرة (F) ينعكس:', en: 'A ray passing through the focal point (F) reflects:' },
-                    options: [
-                        { ar: 'موازياً للمحور الرئيسي', en: 'Parallel to the principal axis' },
-                        { ar: 'ماراً بمركز التكور', en: 'Through the center of curvature' },
-                        { ar: 'عمودياً على السطح', en: 'Perpendicular to the surface' },
-                        { ar: 'في نفس مساره', en: 'Back on itself' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 m = -di / do</span></div>مرآة مقعرة بعدها البؤري 15 cm. إذا وضع جسم على بعد 40 cm، فما هو التكبير؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 m = -di / do</span></div>A concave mirror has a focal length of 15 cm. If an object is placed at 40 cm, what is the magnification?"
+                    },
+                    "options": [
+                        {
+                            "ar": "-0.6",
+                            "en": "-0.6"
+                        },
+                        {
+                            "ar": "0.6",
+                            "en": "0.6"
+                        },
+                        {
+                            "ar": "-1.5",
+                            "en": "-1.5"
+                        },
+                        {
+                            "ar": "1.5",
+                            "en": "1.5"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'الشعاع المار بالبؤرة ينعكس موازياً للمحور الرئيسي.', en: 'A ray passing through the focal point reflects parallel to the principal axis.' }
+                    "correct": 0,
+                    "answer": {
+                        "ar": "أولاً نجد di: 1/15 = 1/40 + 1/di => 1/di = 1/15 - 1/40 = 5/120 = 1/24. إذن di = 24. التكبير m = -24/40 = -0.6.",
+                        "en": "First find di: 1/15 = 1/40 + 1/di => 1/di = 1/15 - 1/40 = 5/120 = 1/24. So di = 24. Magnification m = -24/40 = -0.6."
+                    }
                 },
                 {
-                    q: { ar: 'الشعاع المار بمركز التكور (C) ينعكس:', en: 'A ray passing through the center of curvature (C) reflects:' },
-                    options: [
-                        { ar: 'على نفس مساره (يرتد على نفسه)', en: 'Back on itself' },
-                        { ar: 'موازياً للمحور الرئيسي', en: 'Parallel to the principal axis' },
-                        { ar: 'ماراً بالبؤرة', en: 'Through the focal point' },
-                        { ar: 'بزاوية 45 درجة', en: 'At a 45-degree angle' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>أي نوع من المرايا يستخدم في كاميرات المراقبة لتوفير مجال رؤية واسع؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>Which mirror type is used in security cameras to provide a wide field of view?"
+                    },
+                    "options": [
+                        {
+                            "ar": "مقعرة",
+                            "en": "Concave"
+                        },
+                        {
+                            "ar": "محدبة",
+                            "en": "Convex"
+                        },
+                        {
+                            "ar": "مستوية",
+                            "en": "Plane"
+                        },
+                        {
+                            "ar": "كروية",
+                            "en": "Spherical"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'الشعاع المار بمركز التكور يسقط عمودياً على السطح فينعكس على نفس مساره.', en: 'A ray passing through the center of curvature strikes the surface perpendicularly and reflects back on itself.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "المرايا المحدبة تفرق الأشعة وتوفر مجال رؤية أوسع، لذا تستخدم في المرايا الجانبية للسيارات وكاميرات المراقبة.",
+                        "en": "Convex mirrors diverge light rays and provide a wider field of view, which is why they are used in car side mirrors and security cameras."
+                    }
                 },
                 {
-                    q: { ar: 'ما هو الحد الأدنى من الأشعة الرئيسية اللازمة لتحديد موقع الصورة؟', en: 'What is the minimum number of principal rays needed to locate an image?' },
-                    options: [
-                        { ar: 'شعاعان', en: 'Two rays' },
-                        { ar: 'شعاع واحد', en: 'One ray' },
-                        { ar: 'ثلاثة أشعة', en: 'Three rays' },
-                        { ar: 'أربعة أشعة', en: 'Four rays' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>ما هو بعد الصورة إذا وضع جسم عند البؤرة لمرآة مقعرة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>What is the image distance if an object is placed at the focal point of a concave mirror?"
+                    },
+                    "options": [
+                        {
+                            "ar": "0 cm",
+                            "en": "0 cm"
+                        },
+                        {
+                            "ar": "f cm",
+                            "en": "f cm"
+                        },
+                        {
+                            "ar": "2f cm",
+                            "en": "2f cm"
+                        },
+                        {
+                            "ar": "اللانهاية",
+                            "en": "Infinity"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'يكفي شعاعان رئيسيان لتحديد موقع الصورة، ويمكن استخدام الثالث والرابع للتحقق.', en: 'Two principal rays are sufficient to find the image; the third and fourth can be used to check.' }
+                    "correct": 3,
+                    "answer": {
+                        "ar": "إذا كان do = f، فإن 1/f = 1/f + 1/di، مما يعني 1/di = 0، أي di تقترب من اللانهاية.",
+                        "en": "If do = f, then 1/f = 1/f + 1/di, which means 1/di = 0, so di approaches infinity."
+                    }
                 }
             ]
         },
         {
-            id: 'sec3',
-            title: { ar: '🔹 الجزء 3: تكوين الصور في المرايا المقعرة', en: '🔹 Part 3: Image Formation in Concave Mirrors' },
-            questions: [
+            "id": "sec3",
+            "title": {
+                "ar": "🔹 الجزء 3: التحليل والاستنتاج",
+                "en": "🔹 Part 3: Analysis & Derivations"
+            },
+            "questions": [
                 {
-                    q: { ar: 'عندما يكون الجسم خارج مركز التكور (<span class="math-display">d_o > 2f</span>)، تكون الصورة:', en: 'When the object is outside the center of curvature (<span class="math-display">d_o > 2f</span>), the image is:' },
-                    options: [
-                        { ar: 'مقلوبة، أصغر من الجسم، حقيقية', en: 'Inverted, smaller than object, real' },
-                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' },
-                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
-                        { ar: 'معتدلة، أصغر من الجسم، وهمية', en: 'Upright, smaller than object, virtual' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>أي مما يلي صحيح بالنسبة للمرآة المحدبة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>Which of the following is true for a convex mirror?"
+                    },
+                    "options": [
+                        {
+                            "ar": "تكون دائماً صوراً حقيقية",
+                            "en": "Always forms real images"
+                        },
+                        {
+                            "ar": "تكون دائماً صوراً خيالية",
+                            "en": "Always forms virtual images"
+                        },
+                        {
+                            "ar": "يمكنها تكوين صور حقيقية",
+                            "en": "Can form real images"
+                        },
+                        {
+                            "ar": "بعدها البؤري موجب",
+                            "en": "Focal length is positive"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'عندما يكون الجسم خارج C، تكون الصورة مقلوبة، أصغر، وحقيقية (أمام المرآة).', en: 'When the object is outside C, the image is inverted, smaller, and real (in front of the mirror).' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "المرآة المحدبة دائماً تكون صوراً خيالية ومعتدلة ومصغرة بغض النظر عن بعد الجسم.",
+                        "en": "A convex mirror always forms virtual, upright, and reduced images regardless of the object distance."
+                    }
                 },
                 {
-                    q: { ar: 'عندما يكون الجسم بين البؤرة (F) ومركز التكور (C)، تكون الصورة:', en: 'When the object is between the focal point (F) and center of curvature (C), the image is:' },
-                    options: [
-                        { ar: 'مقلوبة، أكبر من الجسم، حقيقية', en: 'Inverted, larger than object, real' },
-                        { ar: 'معتدلة، أصغر من الجسم، وهمية', en: 'Upright, smaller than object, virtual' },
-                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
-                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 m = hi / ho</span></div>جسم طوله 5 cm وضع أمام مرآة. طول الصورة 2 cm. ما هو التكبير؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 m = hi / ho</span></div>An object 5 cm tall is placed in front of a mirror. The image is 2 cm tall. What is the magnification?"
+                    },
+                    "options": [
+                        {
+                            "ar": "0.4",
+                            "en": "0.4"
+                        },
+                        {
+                            "ar": "2.5",
+                            "en": "2.5"
+                        },
+                        {
+                            "ar": "-0.4",
+                            "en": "-0.4"
+                        },
+                        {
+                            "ar": "-2.5",
+                            "en": "-2.5"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'عندما يكون الجسم بين F و C، تكون الصورة مقلوبة، مكبرة، وحقيقية.', en: 'When the object is between F and C, the image is inverted, magnified, and real.' }
+                    "correct": 0,
+                    "answer": {
+                        "ar": "التكبير m = hi / ho = 2 / 5 = 0.4.",
+                        "en": "Magnification m = hi / ho = 2 / 5 = 0.4."
+                    }
                 },
                 {
-                    q: { ar: 'عندما يكون الجسم عند مركز التكور (<span class="math-display">d_o = 2f</span>)، تكون الصورة:', en: 'When the object is at the center of curvature (<span class="math-display">d_o = 2f</span>), the image is:' },
-                    options: [
-                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
-                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' },
-                        { ar: 'مقلوبة، أصغر من الجسم، حقيقية', en: 'Inverted, smaller than object, real' },
-                        { ar: 'عند اللانهاية', en: 'At infinity' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>ما هي الظاهرة التي تسبب الزيغ الكروي في المرايا؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>What phenomenon causes spherical aberration in mirrors?"
+                    },
+                    "options": [
+                        {
+                            "ar": "انعكاس الضوء",
+                            "en": "Light reflection"
+                        },
+                        {
+                            "ar": "انكسار الضوء",
+                            "en": "Light refraction"
+                        },
+                        {
+                            "ar": "عدم تجمع الأشعة في نقطة واحدة",
+                            "en": "Failure of rays to focus at one point"
+                        },
+                        {
+                            "ar": "تقوس المرآة",
+                            "en": "Mirror curvature"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'عندما يكون الجسم عند C، تتكون الصورة عند C أيضاً، فتكون مقلوبة وبنفس الحجم وحقيقية.', en: 'When the object is at C, the image forms at C, making it inverted, same size, and real.' }
+                    "correct": 2,
+                    "answer": {
+                        "ar": "الزيغ الكروي يحدث لأن الأشعة البعيدة عن المحور الرئيسي لا تنعكس لتتجمع في نفس بؤرة الأشعة القريبة.",
+                        "en": "Spherical aberration occurs because rays far from the principal axis do not reflect to focus at the same point as rays near the axis."
+                    }
                 },
                 {
-                    q: { ar: 'عندما يكون الجسم بين المرآة ونقطة البؤرة (<span class="math-display">d_o < f</span>)، تكون الصورة:', en: 'When the object is between the mirror and the focal point (<span class="math-display">d_o < f</span>), the image is:' },
-                    options: [
-                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' },
-                        { ar: 'مقلوبة، أصغر من الجسم، حقيقية', en: 'Inverted, smaller than object, real' },
-                        { ar: 'مقلوبة، أكبر من الجسم، حقيقية', en: 'Inverted, larger than object, real' },
-                        { ar: 'معتدلة، نفس حجم الجسم، وهمية', en: 'Upright, same size as object, virtual' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 m = -di / do</span></div>إذا كان التكبير يساوي -2، ماذا يعني ذلك؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 m = -di / do</span></div>If the magnification is -2, what does this mean?"
+                    },
+                    "options": [
+                        {
+                            "ar": "الصورة خيالية ومعتدلة",
+                            "en": "Image is virtual and upright"
+                        },
+                        {
+                            "ar": "الصورة حقيقية ومقلوبة",
+                            "en": "Image is real and inverted"
+                        },
+                        {
+                            "ar": "الصورة خيالية ومقلوبة",
+                            "en": "Image is virtual and inverted"
+                        },
+                        {
+                            "ar": "الصورة حقيقية ومعتدلة",
+                            "en": "Image is real and upright"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'عندما يكون الجسم داخل البؤرة، تعمل المرآة كمرآة تجميل: الصورة معتدلة، مكبرة، وهمية (خلف المرآة).', en: 'When the object is inside the focal point, the mirror acts as a makeup mirror: image is upright, magnified, and virtual.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "الإشارة السالبة تعني أن الصورة مقلوبة، والقيمة المطلقة أكبر من 1 تعني أن الصورة حقيقية ومكبرة.",
+                        "en": "The negative sign means the image is inverted, and an absolute value greater than 1 means the image is real and enlarged."
+                    }
                 }
             ]
         },
         {
-            id: 'sec4',
-            title: { ar: '🔹 الجزء 4: عيوب الصور والمرايا المحدبة', en: '🔹 Part 4: Image Defects & Convex Mirrors' },
-            questions: [
+            "id": "sec4",
+            "title": {
+                "ar": "🔹 الجزء 4: المسائل المتقدمة",
+                "en": "🔹 Part 4: Advanced Problem Solving"
+            },
+            "questions": [
                 {
-                    q: { ar: 'ماذا يحدث للصورة عندما يكون الجسم عند نقطة البؤرة (<span class="math-display">d_o = f</span>)؟', en: 'What happens to the image when the object is at the focal point (<span class="math-display">d_o = f</span>)?' },
-                    options: [
-                        { ar: 'تتكون الصورة عند اللانهاية (لا يمكن رؤيتها)', en: 'The image is said to be at infinity (cannot be seen)' },
-                        { ar: 'تتكون صورة وهمية صغيرة', en: 'A small virtual image is formed' },
-                        { ar: 'تتكون صورة حقيقية مكبرة', en: 'A magnified real image is formed' },
-                        { ar: 'لا ينعكس أي ضوء', en: 'No light is reflected' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>أي مما يلي صحيح حول البعد البؤري للمرآة المقعرة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>Which of the following is true about the focal length of a concave mirror?"
+                    },
+                    "options": [
+                        {
+                            "ar": "دائماً سالب",
+                            "en": "It is always negative"
+                        },
+                        {
+                            "ar": "دائماً موجب",
+                            "en": "It is always positive"
+                        },
+                        {
+                            "ar": "يعتمد على بعد الجسم",
+                            "en": "It depends on the object distance"
+                        },
+                        {
+                            "ar": "يساوي صفراً",
+                            "en": "It is zero"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'عندما يكون الجسم عند F، تنعكس الأشعة متوازية ولا تتقاطع، لذا تكون الصورة عند اللانهاية.', en: 'When the object is at F, rays reflect parallel and do not intersect, so the image is at infinity.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "البعد البؤري للمرآة المقعرة يكون دائماً موجباً لأن البؤرة تقع أمام المرآة.",
+                        "en": "The focal length of a concave mirror is always positive because the focal point is in front of the mirror."
+                    }
                 },
                 {
-                    q: { ar: 'ما هو الزيغ الكروي (Spherical Aberration)؟', en: 'What is spherical aberration?' },
-                    options: [
-                        { ar: 'عدم تجمع الأشعة الضوئية في نقطة بؤرية واحدة، مما يجعل الصورة ضبابية', en: 'Light rays do not converge at a single focal point, making the image fuzzy' },
-                        { ar: 'انعكاس الضوء بزاوية خاطئة', en: 'Light reflecting at the wrong angle' },
-                        { ar: 'امتصاص المرآة للضوء بدلاً من عكسه', en: 'The mirror absorbing light instead of reflecting it' },
-                        { ar: 'انكسار الضوء داخل المرآة', en: 'Light refracting inside the mirror' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>وضع جسم على بعد 30 cm من مرآة. تكونت الصورة على بعد 10 cm خلف المرآة. ما هو البعد البؤري؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>An object is placed 30 cm from a mirror. The image is formed 10 cm behind the mirror. What is the focal length?"
+                    },
+                    "options": [
+                        {
+                            "ar": "15 cm",
+                            "en": "15 cm"
+                        },
+                        {
+                            "ar": "-15 cm",
+                            "en": "-15 cm"
+                        },
+                        {
+                            "ar": "7.5 cm",
+                            "en": "7.5 cm"
+                        },
+                        {
+                            "ar": "-7.5 cm",
+                            "en": "-7.5 cm"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'الزيغ الكروي يحدث لأن الأشعة القريبة من الحواف لا تتجمع في نفس نقطة البؤرة، مما يسبب ضبابية الصورة.', en: 'Spherical aberration occurs because rays near the edges do not converge at the same focal point, causing a fuzzy image.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "بما أن الصورة خلف المرآة، فإن di = -10 cm. إذن 1/f = 1/30 + 1/-10 = 1/30 - 3/30 = -2/30. إذن f = -15 cm.",
+                        "en": "Since the image is behind the mirror, di = -10 cm. Thus 1/f = 1/30 + 1/-10 = 1/30 - 3/30 = -2/30. So f = -15 cm."
+                    }
                 },
                 {
-                    q: { ar: 'نقطة البؤرة في المرآة المحدبة تعتبر:', en: 'The focal point in a convex mirror is considered:' },
-                    options: [
-                        { ar: 'وهمية (سالبة)', en: 'Virtual (negative)' },
-                        { ar: 'حقيقية (موجبة)', en: 'Real (positive)' },
-                        { ar: 'موجودة على سطح المرآة', en: 'Located on the mirror surface' },
-                        { ar: 'غير موجودة', en: 'Non-existent' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>ما هي طبيعة الصورة إذا كان الجسم عند مركز التكور (C) لمرآة مقعرة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>What is the nature of the image if the object is at the center of curvature (C) of a concave mirror?"
+                    },
+                    "options": [
+                        {
+                            "ar": "حقيقية، مقلوبة، مساوية",
+                            "en": "Real, inverted, same size"
+                        },
+                        {
+                            "ar": "خيالية، معتدلة، مساوية",
+                            "en": "Virtual, upright, same size"
+                        },
+                        {
+                            "ar": "حقيقية، مقلوبة، مكبرة",
+                            "en": "Real, inverted, enlarged"
+                        },
+                        {
+                            "ar": "خيالية، مقلوبة، مصغرة",
+                            "en": "Virtual, inverted, reduced"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'في المرآة المحدبة، تتباعد الأشعة المنعكسة، وتبدو وكأنها تأتي من نقطة خلف المرآة، لذا البؤرة وهمية (سالبة).', en: 'In a convex mirror, reflected rays diverge and appear to come from a point behind the mirror, so the focal point is virtual (negative).' }
+                    "correct": 0,
+                    "answer": {
+                        "ar": "عندما يكون الجسم عند C، تتكون الصورة عند C أيضاً وتكون حقيقية ومقلوبة ومساوية للجسم.",
+                        "en": "When the object is at C, the image is also formed at C and is real, inverted, and the same size as the object."
+                    }
                 },
                 {
-                    q: { ar: 'الصورة المتكونة دائماً في المرآة المحدبة تكون:', en: 'The image formed in a convex mirror is always:' },
-                    options: [
-                        { ar: 'معتدلة، أصغر من الجسم، وهمية', en: 'Upright, smaller than object, virtual' },
-                        { ar: 'مقلوبة، أكبر من الجسم، حقيقية', en: 'Inverted, larger than object, real' },
-                        { ar: 'مقلوبة، نفس حجم الجسم، حقيقية', en: 'Inverted, same size as object, real' },
-                        { ar: 'معتدلة، أكبر من الجسم، وهمية', en: 'Upright, larger than object, virtual' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>أي مما يلي هو خاصية للصورة الخيالية؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>Which of the following is a property of a virtual image?"
+                    },
+                    "options": [
+                        {
+                            "ar": "يمكن استقبالها على حائل",
+                            "en": "Can be projected on a screen"
+                        },
+                        {
+                            "ar": "دائماً مقلوبة",
+                            "en": "Always inverted"
+                        },
+                        {
+                            "ar": "تتكون من تلاقي امتدادات الأشعة",
+                            "en": "Formed by diverging rays"
+                        },
+                        {
+                            "ar": "تتكون من تلاقي الأشعة الفعلية",
+                            "en": "Formed by actual intersection of rays"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'المرآة المحدبة تعطي دائماً صورة معتدلة، مصغرة، وهمية (مثل مرايا الرؤية الخلفية في السيارات).', en: 'A convex mirror always produces an upright, diminished, and virtual image (like car side-view mirrors).' }
+                    "correct": 2,
+                    "answer": {
+                        "ar": "الصور الخيالية لا يمكن استقبالها على حائل وتتكون من تلاقي امتدادات الأشعة المنعكسة.",
+                        "en": "Virtual images cannot be projected on a screen and are formed by the intersection of the extensions of reflected rays."
+                    }
                 }
             ]
         },
         {
-            id: 'sec5',
-            title: { ar: '🔹 الجزء 5: مسائل تطبيقية وحسابية', en: '🔹 Part 5: Applied & Calculation Problems' },
-            questions: [
+            "id": "sec5",
+            "title": {
+                "ar": "🔹 الجزء 5: التقييم الشامل",
+                "en": "🔹 Part 5: Comprehensive Evaluation"
+            },
+            "questions": [
                 {
-                    q: { ar: 'إذا كان نصف قطر تكور مرآة مقعرة يساوي <span class="math-display">20 cm</span>، فما هو البعد البؤري؟', en: 'If the radius of curvature of a concave mirror is <span class="math-display">20 cm</span>, what is the focal length?' },
-                    options: [
-                        { ar: '<span class="math-display">10 cm</span>', en: '<span class="math-display">10 cm</span>' },
-                        { ar: '<span class="math-display">20 cm</span>', en: '<span class="math-display">20 cm</span>' },
-                        { ar: '<span class="math-display">40 cm</span>', en: '<span class="math-display">40 cm</span>' },
-                        { ar: '<span class="math-display">5 cm</span>', en: '<span class="math-display">5 cm</span>' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>إذا تم تحريك جسم مقترباً من مرآة مقعرة من اللانهاية إلى البؤرة، ماذا يحدث للصورة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>If an object is moved closer to a concave mirror from infinity to the focal point, what happens to the image?"
+                    },
+                    "options": [
+                        {
+                            "ar": "تقترب من المرآة",
+                            "en": "Moves closer to mirror"
+                        },
+                        {
+                            "ar": "تبتعد عن المرآة",
+                            "en": "Moves further from mirror"
+                        },
+                        {
+                            "ar": "تبقى في نفس المكان",
+                            "en": "Stays at the same place"
+                        },
+                        {
+                            "ar": "تصبح معتدلة",
+                            "en": "Becomes upright"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'f = r / 2 = 20 / 2 = 10 cm', en: 'f = r / 2 = 20 / 2 = 10 cm' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "كلما اقترب الجسم من البؤرة، تبتعد الصورة عن المرآة وتزداد في الحجم.",
+                        "en": "As the object moves closer to the focal point, the image moves further away from the mirror and increases in size."
+                    }
                 },
                 {
-                    q: { ar: 'أي نوع من المرايا يُستخدم عادةً كمرايا رؤية خلفية في السيارات لتوسيع مجال الرؤية؟', en: 'Which type of mirror is typically used as a rear-view mirror in cars to widen the field of view?' },
-                    options: [
-                        { ar: 'مرآة محدبة', en: 'Convex mirror' },
-                        { ar: 'مرآة مقعرة', en: 'Concave mirror' },
-                        { ar: 'مرآة مستوية', en: 'Plane mirror' },
-                        { ar: 'مرآة أسطوانية', en: 'Cylindrical mirror' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>مرآة تكبيرها 0.5. ما نوع هذه المرآة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>A mirror has a magnification of 0.5. What type of mirror is it?"
+                    },
+                    "options": [
+                        {
+                            "ar": "مقعرة",
+                            "en": "Concave"
+                        },
+                        {
+                            "ar": "محدبة",
+                            "en": "Convex"
+                        },
+                        {
+                            "ar": "مستوية",
+                            "en": "Plane"
+                        },
+                        {
+                            "ar": "لا شيء مما سبق",
+                            "en": "None of the above"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'تُستخدم المرايا المحدبة لأنها تعطي صورة مصغرة، مما يسمح برؤية مساحة أوسع من الطريق.', en: 'Convex mirrors are used because they produce a diminished image, allowing a wider field of view of the road.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "التكبير الأقل من 1 يشير إلى صورة مصغرة، وهو ما يميز المرايا المحدبة (أو المقعرة في حالات معينة).",
+                        "en": "A magnification less than 1 indicates a reduced image, which is characteristic of convex mirrors (or concave in specific cases)."
+                    }
                 },
                 {
-                    q: { ar: 'إذا وُضع جسم على بعد <span class="math-display">2f</span> من مرآة مقعرة، فأين تتكون الصورة؟', en: 'If an object is placed at a distance of <span class="math-display">2f</span> from a concave mirror, where does the image form?' },
-                    options: [
-                        { ar: 'على بعد <span class="math-display">2f</span> (عند مركز التكور)', en: 'At a distance of <span class="math-display">2f</span> (at the center of curvature)' },
-                        { ar: 'على بعد <span class="math-display">f</span> (عند البؤرة)', en: 'At a distance of <span class="math-display">f</span> (at the focal point)' },
-                        { ar: 'خلف المرآة', en: 'Behind the mirror' },
-                        { ar: 'عند اللانهاية', en: 'At infinity' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">استنتاج وتطبيق تفاعلي</span><span class=\"q-law-pill\">📐 None</span></div>ما هو البعد البؤري للمرآة المستوية؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Interactive Reasoning</span><span class=\"q-law-pill\">📐 None</span></div>What is the focal length of a plane mirror?"
+                    },
+                    "options": [
+                        {
+                            "ar": "0",
+                            "en": "0"
+                        },
+                        {
+                            "ar": "اللانهاية",
+                            "en": "Infinity"
+                        },
+                        {
+                            "ar": "1 m",
+                            "en": "1 m"
+                        },
+                        {
+                            "ar": "يعتمد على بعد الجسم",
+                            "en": "Depends on object distance"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'عندما يكون الجسم عند 2f (مركز التكور)، تتكون الصورة أيضاً عند 2f، وتكون حقيقية ومقلوبة وبنفس الحجم.', en: 'When the object is at 2f (center of curvature), the image also forms at 2f, and is real, inverted, and same size.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "المرآة المستوية يمكن اعتبارها جزءاً من كرة نصف قطرها لانهائي، لذا بعدها البؤري لانهائي.",
+                        "en": "A plane mirror can be considered part of a sphere with an infinite radius, so its focal length is infinite."
+                    }
                 },
                 {
-                    q: { ar: 'لماذا تبدو الصور أحياناً ضبابية عند حواف المرآة الكروية؟', en: 'Why do images sometimes look blurry at the edges of a spherical mirror?' },
-                    options: [
-                        { ar: 'بسبب الزيغ الكروي (Spherical Aberration)', en: 'Due to spherical aberration' },
-                        { ar: 'بسبب انخفاض شدة الإضاءة', en: 'Due to low light intensity' },
-                        { ar: 'بسبب انكسار الضوء في الهواء', en: 'Due to light refraction in air' },
-                        { ar: 'بسبب صغر حجم المرآة', en: 'Due to the small size of the mirror' }
+                    "q": {
+                        "ar": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">مسألة حسابية وتطبيق قانون</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>وضع جسم على بعد 10 cm من مرآة مقعرة بعدها البؤري 5 cm. ما هو بعد الصورة؟",
+                        "en": "<div class=\"q-meta-badges\"><span class=\"q-category-pill\">Applied Problem & Law</span><span class=\"q-law-pill\">📐 1/f = 1/do + 1/di</span></div>An object is placed at 10 cm from a concave mirror with f = 5 cm. What is the image distance?"
+                    },
+                    "options": [
+                        {
+                            "ar": "5 cm",
+                            "en": "5 cm"
+                        },
+                        {
+                            "ar": "10 cm",
+                            "en": "10 cm"
+                        },
+                        {
+                            "ar": "20 cm",
+                            "en": "20 cm"
+                        },
+                        {
+                            "ar": "اللانهاية",
+                            "en": "Infinity"
+                        }
                     ],
-                    correct: 0,
-                    answer: { ar: 'الزيغ الكروي يحدث لأن الأشعة الساقطة على أطراف المرآة لا تتجمع في نفس النقطة البؤرية للأشعة المركزية.', en: 'Spherical aberration occurs because rays hitting the edges of the mirror do not converge at the same focal point as central rays.' }
+                    "correct": 1,
+                    "answer": {
+                        "ar": "1/5 = 1/10 + 1/di => 1/di = 1/5 - 1/10 = 1/10. إذن di = 10 cm.",
+                        "en": "1/5 = 1/10 + 1/di => 1/di = 1/5 - 1/10 = 1/10. So di = 10 cm."
+                    }
                 }
             ]
         }
     ]
 };
+// =====================================================================
 
 function shuffleArray(array) {
     const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
+    for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(rng() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
@@ -551,8 +1030,10 @@ function setLanguage(lang) {
     currentLang = lang;
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
-    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    const btnAr = document.getElementById('btn-ar');
+    const btnEn = document.getElementById('btn-en');
+    if (btnAr) btnAr.classList.toggle('active', lang === 'ar');
+    if (btnEn) btnEn.classList.toggle('active', lang === 'en');
     document.body.classList.toggle('en-mode', lang === 'en');
     document.querySelectorAll('[data-ar][data-en]').forEach(el => {
         el.innerHTML = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
@@ -562,20 +1043,21 @@ function setLanguage(lang) {
 
 function renderExam() {
     const container = document.getElementById('exam-content');
+    if (!container) return;
     const labels = { ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' }, en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' } };
     const lbl = labels[currentLang]; const isRTL = currentLang === 'ar';
     let html = ''; let globalIdx = 0;
     examData.sections.forEach((section) => {
-        html += `<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-indigo-100">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">${section.title[currentLang]}</h2>
+        html += `<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-teal-100">
+            <h2 class="text-xl font-bold mb-4 text-teal-700">${section.title[currentLang]}</h2>
             <ol class="space-y-4 text-sm">`;
         section.questions.forEach((q) => {
             const bs = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
-            html += `<li class="${bs} border-indigo-400 py-2" id="q-${globalIdx}">
+            html += `<li class="${bs} border-teal-400 py-2" id="q-${globalIdx}">
                 <strong>${globalIdx + 1}.</strong> ${q.q[currentLang]}<br>`;
             q.options.forEach((opt, oIdx) => {
                 const rs = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
-                html += `<label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'} hover:bg-indigo-50 rounded-lg p-1 transition">
+                html += `<label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'} hover:bg-teal-50 rounded-lg p-1 transition">
                     <input type="radio" name="q${globalIdx}" value="${String.fromCharCode(97 + oIdx)}" class="${rs}">
                     ${lbl.option[oIdx]}) ${opt[currentLang]}</label>`;
             });
@@ -586,14 +1068,33 @@ function renderExam() {
         html += `</ol></section>`;
     });
     container.innerHTML = html;
+    triggerMathRendering();
+}
+
+function triggerMathRendering() {
+    if (typeof renderMathInElement === 'function') {
+        try {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\[", right: "\]", display: true},
+                    {left: "\(", right: "\)", display: false}
+                ],
+                throwOnError: false
+            });
+        } catch(e) {}
+    }
 }
 
 function startTimer() {
     updateTimerDisplay();
+    if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         timeRemaining--; updateTimerDisplay();
         if (timeRemaining % 60 === 0) saveState(false);
-        if (timeRemaining <= 300) document.getElementById('timer').classList.add('timer-warning');
+        const timerEl = document.getElementById('timer');
+        if (timerEl && timeRemaining <= 600) timerEl.classList.add('timer-warning');
         if (timeRemaining <= 0) {
             clearInterval(timerInterval);
             alert(currentLang === 'ar' ? "⏰ انتهى الوقت!" : "⏰ Time's up!");
@@ -604,7 +1105,8 @@ function startTimer() {
 
 function updateTimerDisplay() {
     const m = Math.floor(timeRemaining / 60); const s = timeRemaining % 60;
-    document.getElementById('timer').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    const timerEl = document.getElementById('timer');
+    if (timerEl) timerEl.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
 function toggleAnswers() {
@@ -621,62 +1123,82 @@ function gradeExam() {
         const li = document.getElementById(`q-${i}`);
         if (li) {
             const isCorrect = sel && sel.value === correctAnswersMap[i];
-            if (isCorrect) { correctCount++; li.classList.add('correct'); li.classList.remove('incorrect'); sectionScores[Math.floor(i / QUESTIONS_PER_SECTION)]++; }
+            if (isCorrect) { 
+                correctCount++; 
+                li.classList.add('correct'); 
+                li.classList.remove('incorrect'); 
+                const secIdx = Math.min(TOTAL_SECTIONS - 1, Math.floor(i / Math.max(1, QUESTIONS_PER_SECTION)));
+                if (sectionScores[secIdx] !== undefined) sectionScores[secIdx]++; 
+            }
             else { li.classList.add('incorrect'); li.classList.remove('correct'); }
         }
     }
-    const score = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
-    document.getElementById('res-total').textContent = `${score} / 100`;
-    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'بطل' : 'Champion');
-    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
-    const pc = document.getElementById('sections-performance'); pc.innerHTML = '';
-    examData.sections.forEach((s, idx) => {
-        pc.innerHTML += `<div class="flex justify-between items-center"><span class="text-gray-700">${s.title[currentLang]}</span><span class="font-bold text-indigo-700">${sectionScores[idx]}/${QUESTIONS_PER_SECTION}</span></div>`;
-    });
-    const badge = document.getElementById('success-badge');
-    document.getElementById('success-percent').textContent = `${score}%`;
-    if (currentLang === 'ar') {
-        if (score >= 90) { badge.textContent = '🌟 ممتاز جداً!'; badge.className = 'success-badge grade-excellent'; }
-        else if (score >= 75) { badge.textContent = '👏 ممتاز!'; badge.className = 'success-badge grade-good'; }
-        else if (score >= 50) { badge.textContent = '👍 جيد'; badge.className = 'success-badge grade-pass'; }
-        else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
-    } else {
-        if (score >= 90) { badge.textContent = '🌟 Outstanding!'; badge.className = 'success-badge grade-excellent'; }
-        else if (score >= 75) { badge.textContent = '👏 Excellent!'; badge.className = 'success-badge grade-good'; }
-        else if (score >= 50) { badge.textContent = '👍 Good'; badge.className = 'success-badge grade-pass'; }
-        else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+    const score = TOTAL_QUESTIONS > 0 ? Math.round((correctCount / TOTAL_QUESTIONS) * 100) : 0;
+    const resTotal = document.getElementById('res-total');
+    if (resTotal) resTotal.textContent = `${score} / 100`;
+    const resName = document.getElementById('res-name');
+    if (resName) resName.textContent = document.getElementById('studentName')?.value || (currentLang === 'ar' ? 'بطل' : 'Champion');
+    const resDate = document.getElementById('res-date');
+    if (resDate) resDate.textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    const pc = document.getElementById('sections-performance');
+    if (pc) {
+        pc.innerHTML = '';
+        examData.sections.forEach((s, idx) => {
+            const secQCount = originalExamData.sections[idx]?.questions.length || QUESTIONS_PER_SECTION;
+            pc.innerHTML += `<div class="flex justify-between items-center"><span class="text-gray-700">${s.title[currentLang]}</span><span class="font-bold text-teal-700">${sectionScores[idx] || 0}/${secQCount}</span></div>`;
+        });
     }
-    document.getElementById('results-panel').classList.remove('hidden');
-    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    const badge = document.getElementById('success-badge');
+    const successPercent = document.getElementById('success-percent');
+    if (successPercent) successPercent.textContent = `${score}%`;
+    if (badge) {
+        if (currentLang === 'ar') {
+            if (score >= 90) { badge.textContent = '🌟 ممتاز جداً!'; badge.className = 'success-badge grade-excellent'; }
+            else if (score >= 75) { badge.textContent = '👏 ممتاز!'; badge.className = 'success-badge grade-good'; }
+            else if (score >= 50) { badge.textContent = '👍 جيد'; badge.className = 'success-badge grade-pass'; }
+            else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
+        } else {
+            if (score >= 90) { badge.textContent = '🌟 Outstanding!'; badge.className = 'success-badge grade-excellent'; }
+            else if (score >= 75) { badge.textContent = '👏 Excellent!'; badge.className = 'success-badge grade-good'; }
+            else if (score >= 50) { badge.textContent = '👍 Good'; badge.className = 'success-badge grade-pass'; }
+            else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+        }
+    }
+    const resultsPanel = document.getElementById('results-panel');
+    if (resultsPanel) {
+        resultsPanel.classList.remove('hidden');
+        resultsPanel.scrollIntoView({ behavior: 'smooth' });
+    }
     if (timerInterval) clearInterval(timerInterval);
 }
 
 function sendResultsToEmail() {
     const btn = document.getElementById('sendEmailBtn');
     const status = document.getElementById('emailStatus');
+    if (!btn || !status) return;
     btn.disabled = true;
     btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
-    const name = document.getElementById('studentName').value || 'N/A';
-    const studentClass = document.getElementById('studentClass').value || 'N/A';
-    const date = document.getElementById('examDate').value || new Date().toLocaleDateString();
-    const score = document.getElementById('res-total').textContent;
-    const successRate = document.getElementById('success-percent').textContent;
-    const badge = document.getElementById('success-badge').textContent;
+    const name = document.getElementById('studentName')?.value || 'N/A';
+    const studentClass = document.getElementById('studentClass')?.value || 'N/A';
+    const date = document.getElementById('examDate')?.value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total')?.textContent || '0 / 100';
+    const successRate = document.getElementById('success-percent')?.textContent || '0%';
+    const badge = document.getElementById('success-badge')?.textContent || '-';
     let questionsHTML = ''; let globalIdx = 0;
     examData.sections.forEach((section, sectionIdx) => {
-        questionsHTML += `<tr style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;"><td colspan="5" style="padding:12px;font-weight:bold;">📌 ${currentLang==='ar'?'القسم':'Section'} ${sectionIdx+1}: ${section.title[currentLang]}</td></tr>`;
+        questionsHTML += `<tr style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;"><td colspan="5" style="padding:12px;font-weight:bold;">📌 ${currentLang==='ar'?'القسم':'Section'} ${sectionIdx+1}: ${section.title[currentLang]}</td></tr>`;
         section.questions.forEach((q) => {
             const sel = document.querySelector(`input[name="q${globalIdx}"]:checked`);
             const sv = sel ? sel.value : null; const cv = correctAnswersMap[globalIdx]; const ic = sv === cv;
             let sat = currentLang==='ar'?'❌ لم يجب':'❌ No answer'; let sac = '#dc2626';
-            if (sv) { const si = sv.charCodeAt(0)-97; sat = q.options[si][currentLang]; sac = ic?'#059669':'#dc2626'; }
-            const cat = q.options[q.correct][currentLang];
+            if (sv) { const si = sv.charCodeAt(0)-97; sat = q.options[si] ? q.options[si][currentLang] : 'N/A'; sac = ic?'#059669':'#dc2626'; }
+            const cat = q.options[q.correct] ? q.options[q.correct][currentLang] : 'N/A';
             const rb = ic?'#f0fdf4':'#fef2f2'; const bl = ic?'4px solid #10b981':'4px solid #ef4444';
-            questionsHTML += `<tr style="background:${rb};border-right:${bl};"><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;font-weight:bold;">${globalIdx+1}</td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#4338ca;">${currentLang==='ar'?'❓ السؤال:':'❓ Question:'}</strong><br><span style="font-size:13px;">${q.q[currentLang]}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:${sac};">${currentLang==='ar'?'✍️ إجابة الطالب:':'✍️ Student:'}</strong><br><span style="color:${sac};font-size:13px;">${sat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#059669;">${currentLang==='ar'?'✅ الصحيحة:':'✅ Correct:'}</strong><br><span style="color:#059669;font-size:13px;">${cat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;">${ic?'<span style="font-size:24px;">✅</span>':'<span style="font-size:24px;">❌</span>'}</td></tr>`;
+            questionsHTML += `<tr style="background:${rb};border-right:${bl};"><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;font-weight:bold;">${globalIdx+1}</td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#0f766e;">${currentLang==='ar'?'❓ السؤال:':'❓ Question:'}</strong><br><span style="font-size:13px;">${q.q[currentLang]}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:${sac};">${currentLang==='ar'?'✍️ إجابة الطالب:':'✍️ Student:'}</strong><br><span style="color:${sac};font-size:13px;">${sat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;"><strong style="color:#059669;">${currentLang==='ar'?'✅ الصحيحة:':'✅ Correct:'}</strong><br><span style="color:#059669;font-size:13px;">${cat}</span></td><td style="padding:10px;border:1px solid #e5e7eb;text-align:center;">${ic?'<span style="font-size:24px;">✅</span>':'<span style="font-size:24px;">❌</span>'}</td></tr>`;
             globalIdx++;
         });
     });
-    const answersHTML = `<div style="font-family:'Segoe UI',Tahoma,Arial;direction:${currentLang==='ar'?'rtl':'ltr'};"><div style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;padding:20px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="margin:0;">${currentLang==='ar'?'نتيجة امتحان المرايا المقعرة والمحدبة':'Concave & Convex Mirrors Exam Result'}</h2><p style="margin:5px 0 0;opacity:0.9;">Physics - Geometric Optics</p></div><div style="background:#eef2ff;padding:15px;"><table style="width:100%;border-collapse:collapse;"><tr><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'😊 الاسم:':'😊 Name:'}</td><td style="padding:8px;">${name}</td><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'🏫 الشعبة:':'🏫 Class:'}</td><td style="padding:8px;">${studentClass}</td></tr><tr><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'📅 التاريخ:':'📅 Date:'}</td><td style="padding:8px;">${date}</td><td style="padding:8px;font-weight:bold;color:#4338ca;">${currentLang==='ar'?'🏆 التقدير:':'🏆 Grade:'}</td><td style="padding:8px;">${badge}</td></tr></table></div><div style="background:white;padding:20px;text-align:center;"><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#4f46e5;">${score}</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'الدرجة':'Score'}</div></div><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#059669;">${successRate}%</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'النسبة':'Rate'}</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#4f46e5;color:white;"><th style="padding:10px;border:1px solid #6366f1;">#</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'السؤال':'Question'}</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'إجابة الطالب':'Student'}</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'الصحيحة':'Correct'}</th><th style="padding:10px;border:1px solid #6366f1;">${currentLang==='ar'?'النتيجة':'Result'}</th></tr></thead><tbody>${questionsHTML}</tbody></table><div style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);padding:15px;border-radius:0 0 10px 10px;"><p style="margin:0;color:#4338ca;text-align:center;">🪞 <strong>${currentLang==='ar'?'أحسنت يا بطل! استمر في إتقان الفيزياء!':'Great job! Keep mastering Physics!'}</strong> 🪞</p><p style="margin:5px 0 0;color:#4338ca;text-align:center;font-size:12px;">${currentLang==='ar'?'تم الإرسال تلقائياً | Mr. Mohammed Hesham':'Auto-sent | Mr. Mohammed Hesham'}</p></div></div>`;
+    const answersHTML = `<div style="font-family:'Segoe UI',Tahoma,Arial;direction:${currentLang==='ar'?'rtl':'ltr'};"><div style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;padding:20px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="margin:0;">${currentLang==='ar'?'نتيجة الامتحان':'Exam Result'}</h2><p style="margin:5px 0 0;opacity:0.9;">${currentLang==='ar'?'تقرير تفصيلي':'Detailed Report'}</p></div><div style="background:#f0fdfa;padding:15px;"><table style="width:100%;border-collapse:collapse;"><tr><td style="padding:8px;font-weight:bold;color:#0f766e;">${currentLang==='ar'?'😊 الاسم:':'😊 Name:'}</td><td style="padding:8px;">${name}</td><td style="padding:8px;font-weight:bold;color:#0f766e;">${currentLang==='ar'?'🏫 الشعبة:':'🏫 Class:'}</td><td style="padding:8px;">${studentClass}</td></tr><tr><td style="padding:8px;font-weight:bold;color:#0f766e;">${currentLang==='ar'?'📅 التاريخ:':'📅 Date:'}</td><td style="padding:8px;">${date}</td><td style="padding:8px;font-weight:bold;color:#0f766e;">${currentLang==='ar'?'🏆 التقدير:':'🏆 Grade:'}</td><td style="padding:8px;">${badge}</td></tr></table></div><div style="background:white;padding:20px;text-align:center;"><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#0d9488;">${score}</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'الدرجة':'Score'}</div></div><div style="display:inline-block;margin:0 15px;"><div style="font-size:32px;font-weight:bold;color:#059669;">${successRate}%</div><div style="color:#6b7280;font-size:13px;">${currentLang==='ar'?'النسبة':'Rate'}</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#0d9488;color:white;"><th style="padding:10px;border:1px solid #0f766e;">#</th><th style="padding:10px;border:1px solid #0f766e;">${currentLang==='ar'?'السؤال':'Question'}</th><th style="padding:10px;border:1px solid #0f766e;">${currentLang==='ar'?'إجابة الطالب':'Student'}</th><th style="padding:10px;border:1px solid #0f766e;">${currentLang==='ar'?'الصحيحة':'Correct'}</th><th style="padding:10px;border:1px solid #0f766e;">${currentLang==='ar'?'النتيجة':'Result'}</th></tr></thead><tbody>${questionsHTML}</tbody></table><div style="background:linear-gradient(135deg,#f0fdfa,#ccfbf1);padding:15px;border-radius:0 0 10px 10px;"><p style="margin:0;color:#0f766e;text-align:center;">📐 <strong>${currentLang==='ar'?'أحسنت يا بطل!':'Great job!'}</strong> 📐</p><p style="margin:5px 0 0;color:#0f766e;text-align:center;font-size:12px;">${currentLang==='ar'?'تم الإرسال تلقائياً | Mr. Mohammed Hesham':'Auto-sent | Mr. Mohammed Hesham'}</p></div></div>`;
     emailjs.send(SERVICE_ID, TEMPLATE_ID, { to_email: TARGET_EMAIL, student_name: name, student_class: studentClass, exam_date: date, total_score: score, success_rate: successRate, grade: badge, answers_table: answersHTML }).then(() => {
         status.textContent = currentLang==='ar'?'✅ تم الإرسال بنجاح!':'✅ Sent successfully!'; status.style.color = '#059669'; btn.textContent = currentLang==='ar'?'✓ تم':'✓ Sent';
     }).catch(err => {
@@ -692,19 +1214,22 @@ window.addEventListener('DOMContentLoaded', () => {
         answersVisible = saved.answersVisible || false;
         document.documentElement.lang = currentLang;
         document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-        document.getElementById('btn-ar').classList.toggle('active', currentLang === 'ar');
-        document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+        const btnAr = document.getElementById('btn-ar');
+        const btnEn = document.getElementById('btn-en');
+        if (btnAr) btnAr.classList.toggle('active', currentLang === 'ar');
+        if (btnEn) btnEn.classList.toggle('active', currentLang === 'en');
         document.body.classList.toggle('en-mode', currentLang === 'en');
         document.querySelectorAll('[data-ar][data-en]').forEach(el => { el.innerHTML = currentLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en'); });
     } else { currentSeed = Date.now(); }
     prepareShuffledExam(); renderExam();
     if (saved) {
-        if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
-        if (saved.studentClass) document.getElementById('studentClass').value = saved.studentClass;
-        if (saved.examDate) document.getElementById('examDate').value = saved.examDate;
+        if (saved.studentName) { const el = document.getElementById('studentName'); if (el) el.value = saved.studentName; }
+        if (saved.studentClass) { const el = document.getElementById('studentClass'); if (el) el.value = saved.studentClass; }
+        if (saved.examDate) { const el = document.getElementById('examDate'); if (el) el.value = saved.examDate; }
         if (saved.answers) restoreAnswers(saved.answers);
     }
     setupAnswerListeners(); setupInputListeners(); startTimer();
+    setTimeout(triggerMathRendering, 250);
 });
 window.addEventListener('beforeunload', () => saveState(false));
 </script>
